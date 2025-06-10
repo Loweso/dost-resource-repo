@@ -1,0 +1,93 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+@font-face {
+  font-family: "Vogue";
+  src: url("/fonts/Vogue.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Coolvetica";
+  src: url("/fonts/Coolvetica Rg.otf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Creato Display";
+  src: url("/fonts/CreatoDisplay-Regular.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+.font-vogue {
+  font-family: "Vogue", serif;
+}
+
+.font-coolvetica {
+  font-family: "Coolvetica", sans-serif;
+}
+
+.font-creato {
+  font-family: "Creato Display", sans-serif;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: "Coolvetica", Helvetica, sans-serif;
+}
+
+/* Ocean Blue Animated Background */
+.ocean-bg {
+  background: linear-gradient(
+    -45deg,
+    #1e3c72,
+    #2a5298,
+    #4ca1af,
+    #1e3c72,
+    #1e3c72,
+    #2a5298,
+    #4ca1af,
+    #1e3c72
+  );
+  background-size: 400% 400%;
+  animation: oceanAnimation 15s ease infinite;
+  height: 100vh;
+  width: 100vw;
+  top: 0;
+  left: 0;
+  z-index: -1;
+}
+
+@keyframes oceanAnimation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
