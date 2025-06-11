@@ -42,5 +42,28 @@ namespace project_backend.Controllers
                 isVerified = user.IsVerified
             });
         }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateUser(int id, [FromBody] UpdateUserDto dto)
+        {
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            user.FirstName = dto.FirstName;
+            user.MiddleName = dto.MiddleName;
+            user.LastName = dto.LastName;
+            user.Email = dto.Email;
+            user.YearLevel = dto.YearLevel;
+            user.University = dto.University;
+            user.Course = dto.Course;
+
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
     }
 }

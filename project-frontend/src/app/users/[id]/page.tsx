@@ -13,7 +13,7 @@ type UserProfile = {
   middleName: string;
   lastName: string;
   email: string;
-  yearLevel: string;
+  yearLevel: number;
   university: string;
   course: string;
   isVerified: boolean;
@@ -21,6 +21,8 @@ type UserProfile = {
 
 export default function ProfilePage() {
   const { id } = useParams();
+  const userId = id as string;
+
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -59,7 +61,7 @@ export default function ProfilePage() {
           WELCOME!
         </p>
 
-        {userProfile && <ProfileCard {...userProfile} />}
+        {userProfile && <ProfileCard id={userId} {...userProfile} />}
       </div>
 
       <div className="w-full bg-white py-12 px-4 sm:px-8">

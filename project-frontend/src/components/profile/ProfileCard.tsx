@@ -1,23 +1,27 @@
 import Image from "next/image";
+import { useState } from "react";
 import { FaCheckCircle } from "react-icons/fa";
 import { ImCross } from "react-icons/im";
 import { FiEdit } from "react-icons/fi";
 import { TiUserDelete } from "react-icons/ti";
 import { FiLogOut } from "react-icons/fi";
+import EditProfileModal from "./EditProfileModal";
 
 type ProfileCardProps = {
+  id: string;
   profileImageUrl: string;
   firstName: string;
   middleName: string;
   lastName: string;
   email: string;
-  yearLevel: string;
+  yearLevel: number;
   university: string;
   course: string;
   isVerified: boolean;
 };
 
 export default function ProfileCard({
+  id,
   profileImageUrl,
   firstName,
   middleName,
@@ -28,8 +32,25 @@ export default function ProfileCard({
   course,
   isVerified,
 }: ProfileCardProps) {
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
   return (
     <div className="max-w-3xl w-full mx-auto bg-white shadow-md rounded-2xl overflow-hidden flex flex-col sm:flex-row items-center sm:items-start">
+      {isEditModalOpen && (
+        <EditProfileModal
+          id={id}
+          profileImageUrl={profileImageUrl}
+          firstName={firstName}
+          middleName={middleName}
+          lastName={lastName}
+          email={email}
+          yearLevel={yearLevel}
+          university={university}
+          course={course}
+          onClose={() => setIsEditModalOpen(false)}
+        />
+      )}
+
       {/* Left: Profile Picture */}
       <div className="flex flex-col items-center justify-center w-full md:w-1/3 h-full p-3 md:p-6">
         <div className="w-24 h-24 md:w-36 md:h-36 rounded-full overflow-hidden border-4 border-blue-500 mb-3">
@@ -92,17 +113,22 @@ export default function ProfileCard({
         </div>
 
         <div className="pt-4 flex flex-row items-center justify-end md:justify-between space-y-2 md:space-y-0 md:space-x-4 gap-2">
-          <button className="flex items-center gap-2 text-yellow-700 bg-yellow-100 p-2 rounded-xl hover:underline hover:bg-yellow-200 cursor-pointer">
-            <FiEdit />
-            <span className="hidden md:inline">Edit Profile</span>
+          <button
+            className="flex items-center gap-2 text-yellow-700 bg-yellow-100 p-2 rounded-xl hover:underline hover:bg-yellow-200 cursor-pointer"
+            onClick={() => setIsEditModalOpen(true)}
+          >
+            <FiEdit className="text-lg md:text-base" />
+            <span className="hidden md:inline font-creato">Edit Profile</span>
           </button>
           <button className="flex items-center gap-2 text-red-700 bg-red-100 p-2 rounded-xl hover:underline hover:bg-red-200 cursor-pointer">
-            <TiUserDelete />
-            <span className="hidden md:inline">Deactivate Profile</span>
+            <TiUserDelete className="text-lg md:text-base" />
+            <span className="hidden md:inline font-creato">
+              Deactivate Profile
+            </span>
           </button>
           <button className="flex items-center gap-2 text-gray-700 bg-gray-300 p-2 rounded-xl hover:underline hover:bg-gray-400 cursor-pointer">
-            <FiLogOut />
-            <span className="hidden md:inline">Log Out</span>
+            <FiLogOut className="text-lg md:text-base" />
+            <span className="hidden md:inline font-creato">Log Out</span>
           </button>
         </div>
       </div>
