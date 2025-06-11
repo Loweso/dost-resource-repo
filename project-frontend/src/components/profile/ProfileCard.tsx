@@ -1,4 +1,9 @@
 import Image from "next/image";
+import { FaCheckCircle } from "react-icons/fa";
+import { ImCross } from "react-icons/im";
+import { FiEdit } from "react-icons/fi";
+import { TiUserDelete } from "react-icons/ti";
+import { FiLogOut } from "react-icons/fi";
 
 type ProfileCardProps = {
   profileImageUrl: string;
@@ -9,6 +14,7 @@ type ProfileCardProps = {
   yearLevel: string;
   university: string;
   course: string;
+  isVerified: boolean;
 };
 
 export default function ProfileCard({
@@ -20,24 +26,42 @@ export default function ProfileCard({
   yearLevel,
   university,
   course,
+  isVerified,
 }: ProfileCardProps) {
   return (
     <div className="max-w-3xl w-full mx-auto bg-white shadow-md rounded-2xl overflow-hidden flex flex-col sm:flex-row items-center sm:items-start">
       {/* Left: Profile Picture */}
-      <div className="flex w-full md:w-1/3 md:h-full items-center justify-center p-6">
-        <div className="w-32 h-32 md:w-36 md:h-36 rounded-full overflow-hidden border-4 border-blue-500">
+      <div className="flex flex-col items-center justify-center w-full md:w-1/3 h-full p-3 md:p-6">
+        <div className="w-24 h-24 md:w-36 md:h-36 rounded-full overflow-hidden border-4 border-blue-500 mb-3">
           <Image
-            src={profileImageUrl ? "" : "/images/default_avatar.png"}
+            src={profileImageUrl || "/images/default_avatar.png"}
             alt="Profile Picture"
             width={144}
             height={144}
             className="object-cover w-full h-full"
           />
         </div>
+        <div className="flex items-center space-x-2">
+          {isVerified ? (
+            <>
+              <FaCheckCircle className="text-green-600 text-lg" />
+              <span className="text-green-700 font-medium text-sm">
+                Verified User
+              </span>
+            </>
+          ) : (
+            <>
+              <ImCross className="text-red-600 text-base" />
+              <span className="text-red-700 font-medium text-sm">
+                Unverified User
+              </span>
+            </>
+          )}
+        </div>
       </div>
 
-      {/* Right: User Information */}
-      <div className="text-left w-full space-y-2 p-4 md:p-8 bg-blue-100 text-xs sm:text-base">
+      {/* Right: User Info + Buttons */}
+      <div className="text-left w-full space-y-2 p-4 md:p-8 bg-blue-50 text-xs sm:text-base border-t-2 sm:border-t-0 sm:border-l-2">
         <div>
           <span className="font-semibold text-gray-700">First Name: </span>
           <span className="font-creato">{firstName}</span>
@@ -65,6 +89,21 @@ export default function ProfileCard({
         <div>
           <span className="font-semibold text-gray-700">Course: </span>
           <span className="font-creato">{course}</span>
+        </div>
+
+        <div className="pt-4 flex flex-row items-center justify-end md:justify-between space-y-2 md:space-y-0 md:space-x-4 gap-2">
+          <button className="flex items-center gap-2 text-yellow-700 bg-yellow-100 p-2 rounded-xl hover:underline hover:bg-yellow-200 cursor-pointer">
+            <FiEdit />
+            <span className="hidden md:inline">Edit Profile</span>
+          </button>
+          <button className="flex items-center gap-2 text-red-700 bg-red-100 p-2 rounded-xl hover:underline hover:bg-red-200 cursor-pointer">
+            <TiUserDelete />
+            <span className="hidden md:inline">Deactivate Profile</span>
+          </button>
+          <button className="flex items-center gap-2 text-gray-700 bg-gray-300 p-2 rounded-xl hover:underline hover:bg-gray-400 cursor-pointer">
+            <FiLogOut />
+            <span className="hidden md:inline">Log Out</span>
+          </button>
         </div>
       </div>
     </div>

@@ -32,5 +32,13 @@ namespace project_backend.Models
 
         [Range(1, 4, ErrorMessage = "Year level must be between 1 and 4.")]
         public int YearLevel { get; set; }
+
+        [Required]
+        [MaxLength(10)]
+        public string Role { get; set; } = "Student";
+
+        public string ProfileImageUrl { get; set; } = string.Empty;
+        public bool IsVerified { get; set; } = false;
+
     }
 }

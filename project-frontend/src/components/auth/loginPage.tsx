@@ -4,8 +4,10 @@ import Image from "next/image";
 import Link from "next/link";
 import axios, { AxiosError } from "axios";
 import { LoadingModal } from "../loadingModal";
+import { UserStore } from "@/store/user";
 
 export default function LoginPage() {
+  const setUser = UserStore((state) => state.setUser);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -23,15 +25,21 @@ export default function LoginPage() {
     try {
       const response = await axios.post(
         "http://localhost:5090/api/auth/login",
-        userData
+        userData,
+        {
+          withCredentials: true,
+        }
       );
 
       const userId = response.data?.userId;
+      const userRole = response.data?.role;
+      const userEmail = email;
 
       if (userId) {
         toast.success("Login successful! Redirecting to your user profile...");
         setEmail("");
         setPassword("");
+        setUser({ userId, email: userEmail, role: userRole });
       } else {
         toast.error("User not found. Please try again.", response.data?.token);
       }

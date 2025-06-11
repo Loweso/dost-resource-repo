@@ -1,26 +1,65 @@
 "use client";
+import toast, { Toaster } from "react-hot-toast";
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import axios, { AxiosError } from "axios";
 import ProfileCard from "@/components/profile/ProfileCard";
 import RequirementsTracker from "@/components/profile/RequirementsTracker";
+import { LoadingModal } from "@/components/loadingModal";
+
+type UserProfile = {
+  profileImageUrl: string;
+  firstName: string;
+  middleName: string;
+  lastName: string;
+  email: string;
+  yearLevel: string;
+  university: string;
+  course: string;
+  isVerified: boolean;
+};
 
 export default function ProfilePage() {
-  const userProfile = {
-    profileImageUrl: "",
-    firstName: "Louise",
-    middleName: "M.",
-    lastName: "Deiparine",
-    email: "louise@example.com",
-    yearLevel: "3rd Year",
-    university: "University of Cebu",
-    course: "BS Computer Science",
-  };
+  const { id } = useParams();
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!id) return;
+
+    const fetchUser = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:5090/api/users/${id}`
+        );
+        setUserProfile(response.data);
+      } catch (err) {
+        const axiosError = err as AxiosError;
+        console.error("Registration error:", axiosError);
+        toast.error(
+          `Fetching user data failed: ${
+            axiosError.message || "Please check your network."
+          }`
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUser();
+  }, [id]);
 
   return (
     <div className="flex flex-col w-full overflow-x-hidden">
-      <div className="w-full bg-gray-100 py-16 px-4 flex flex-col justify-center items-center gap-9 ocean-bg">
+      <Toaster />
+      {loading && <LoadingModal />}
+      <div className="w-full h-screen py-16 px-4 flex flex-col justify-center items-center gap-4 md:gap-9">
+        <div className="absolute inset-0 ocean-bg"></div>
         <p className="text-5xl sm:text-7xl text-white font-vogue text-center">
           WELCOME!
         </p>
-        <ProfileCard {...userProfile} />
+
+        {userProfile && <ProfileCard {...userProfile} />}
       </div>
 
       <div className="w-full bg-white py-12 px-4 sm:px-8">

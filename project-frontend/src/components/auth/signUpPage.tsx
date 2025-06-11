@@ -12,12 +12,13 @@ export default function SignUpPage() {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async (event: { preventDefault: () => void }) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setIsLoading(true);
 
     if (password !== confirmPassword) {
       toast.error("Passwords do not match. Please try again.");
+      setIsLoading(false);
       return;
     }
 
@@ -28,12 +29,16 @@ export default function SignUpPage() {
     };
 
     try {
-      await axios.post("http://localhost:5090/api/auth/register", userData);
+      await axios.post("http://localhost:5090/api/auth/register", userData, {
+        withCredentials: true,
+      });
 
       toast.success("Registration successful! Please log in.");
       setEmail("");
       setPassword("");
       setConfirmPassword("");
+
+      window.location.href = "/login";
     } catch (error) {
       const axiosError = error as AxiosError;
 

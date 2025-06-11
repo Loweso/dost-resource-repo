@@ -2,12 +2,11 @@ using Microsoft.AspNetCore.Mvc;
 using project_backend.Models;
 using project_backend.Data;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Cryptography;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
-
 
 namespace project_backend.Controllers
 {
@@ -16,13 +15,12 @@ namespace project_backend.Controllers
     public class AuthController : ControllerBase
     {
         private readonly DataContext _context;
-        private readonly IConfiguration _config;
 
-        public AuthController(DataContext context, IConfiguration config)
+        public AuthController(DataContext context)
         {
             _context = context;
-            _config = config;
         }
+
         [HttpPost("register")]
         public async Task<IActionResult> Register(UserSignupDto request)
         {
@@ -34,7 +32,8 @@ namespace project_backend.Controllers
             var user = new User
             {
                 Email = request.Email,
-                PasswordHash = passwordHash
+                PasswordHash = passwordHash,
+                Role = "Student"
             };
 
             _context.Users.Add(user);
@@ -47,30 +46,33 @@ namespace project_backend.Controllers
         public async Task<IActionResult> Login(UserLoginDto request)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
-            if (user == null) return Unauthorized("User not found");
+            if (user == null)
+                return Unauthorized("User not found");
 
             if (user.PasswordHash != ComputeHash(request.Password))
                 return Unauthorized("Incorrect password");
 
-            var claims = new[]
-{
-            new Claim(ClaimTypes.Email, user.Email),
-        };
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Role, user.Role)
+            };
 
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var principal = new ClaimsPrincipal(identity);
 
-        var token = new JwtSecurityToken(
-            issuer: _config["Jwt:Issuer"],
-            audience: _config["Jwt:Issuer"],
-            claims: claims,
-            expires: DateTime.Now.AddHours(1),
-            signingCredentials: creds
-        );
+            // Sign in user
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
-        var jwt = new JwtSecurityTokenHandler().WriteToken(token);
-        return Ok(new { token = jwt, userId = user.Id });
+            return Ok(new { userId = user.Id, role = user.Role });
+        }
 
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return Ok(new { message = "Logout successful" });
         }
 
         private string ComputeHash(string password)
