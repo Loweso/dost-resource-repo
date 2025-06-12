@@ -1,11 +1,13 @@
 "use client";
+import { AxiosError } from "axios";
 import toast, { Toaster } from "react-hot-toast";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import axios, { AxiosError } from "axios";
 import ProfileCard from "@/components/profile/ProfileCard";
 import RequirementsTracker from "@/components/profile/RequirementsTracker";
 import { LoadingModal } from "@/components/loadingModal";
+import { UserStore } from "@/store/user";
+import api from "@/lib/api";
 
 type UserProfile = {
   profileImageUrl: string;
@@ -26,14 +28,15 @@ export default function ProfilePage() {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const { userId: currentUserId, isLoggedIn } = UserStore();
+  const showActions = isLoggedIn && currentUserId === userId;
+
   useEffect(() => {
     if (!id) return;
 
     const fetchUser = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:5090/api/users/${id}`
-        );
+        const response = await api.get(`/users/${id}`);
         setUserProfile(response.data);
       } catch (err) {
         const axiosError = err as AxiosError;
@@ -61,7 +64,9 @@ export default function ProfilePage() {
           WELCOME!
         </p>
 
-        {userProfile && <ProfileCard id={userId} {...userProfile} />}
+        {userProfile && (
+          <ProfileCard id={userId} {...userProfile} showActions={showActions} />
+        )}
       </div>
 
       <div className="w-full bg-white py-12 px-4 sm:px-8">

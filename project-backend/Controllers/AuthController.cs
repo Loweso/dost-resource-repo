@@ -11,7 +11,7 @@ using System.Text;
 namespace project_backend.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/auth")]
     public class AuthController : ControllerBase
     {
         private readonly DataContext _context;
@@ -65,6 +65,11 @@ namespace project_backend.Controllers
             // Sign in user
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
+            // ✅ Store session values
+            HttpContext.Session.SetString("userId", user.Id.ToString());
+            HttpContext.Session.SetString("email", user.Email);
+            HttpContext.Session.SetString("role", user.Role);
+
             return Ok(new { userId = user.Id, role = user.Role });
         }
 
@@ -72,7 +77,31 @@ namespace project_backend.Controllers
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            HttpContext.Session.Clear();
             return Ok(new { message = "Logout successful" });
+        }
+
+        [HttpGet("session")]
+        public IActionResult GetSession()
+        {
+            if (HttpContext.Session.TryGetValue("userId", out var userIdBytes))
+            {
+                string userId = Encoding.UTF8.GetString(userIdBytes);
+                string? email = HttpContext.Session.GetString("email");
+                string? role = HttpContext.Session.GetString("role");
+
+                return Ok(new
+                {
+                    user = new
+                    {
+                        id = userId,
+                        email = email,
+                        role = role
+                    }
+                });
+            }
+
+            return Unauthorized(new { message = "No active session" });
         }
 
         private string ComputeHash(string password)

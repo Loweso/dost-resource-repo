@@ -2,7 +2,8 @@ import toast, { Toaster } from "react-hot-toast";
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import axios, { AxiosError } from "axios";
+import api from "@/lib/api";
+import { AxiosError } from "axios";
 import { LoadingModal } from "../loadingModal";
 
 export default function SignUpPage() {
@@ -29,7 +30,7 @@ export default function SignUpPage() {
     };
 
     try {
-      await axios.post("http://localhost:5090/api/auth/register", userData, {
+      await api.post("/auth/register", userData, {
         withCredentials: true,
       });
 

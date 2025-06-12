@@ -2,11 +2,28 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaBars } from "react-icons/fa";
+import { UserStore } from "@/store/user";
+import { useRouter } from "next/navigation";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { isLoggedIn, userId } = UserStore();
+  const [isMounted, setIsMounted] = useState(false);
+
+  const router = useRouter();
+  const handleProfile = async () => {
+    if (isLoggedIn) {
+      router.push(`/users/${userId}`);
+    }
+  };
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) return null;
 
   return (
     <>
@@ -35,29 +52,35 @@ export default function Navbar() {
                 About
               </span>
             </Link>
+            {!isLoggedIn && (
+              <Link href="/login" className="cursor-pointer">
+                <span className="text-gray-700 hover:text-black font-medium">
+                  Log in
+                </span>
+              </Link>
+            )}
 
-            <Link href="/login" className="cursor-pointer">
-              <span className="text-gray-700 hover:text-black font-medium">
-                Log in
-              </span>
-            </Link>
-
-            <button className="w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center text-gray-600 cursor-pointer">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-5 h-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
+            {isLoggedIn && (
+              <button
+                className="w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center text-gray-600 cursor-pointer"
+                onClick={handleProfile}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 14a6 6 0 100-12 6 6 0 000 12zM4 20a8 8 0 1116 0H4z"
-                />
-              </svg>
-            </button>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="w-5 h-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 14a6 6 0 100-12 6 6 0 000 12zM4 20a8 8 0 1116 0H4z"
+                  />
+                </svg>
+              </button>
+            )}
           </div>
         </div>
       </nav>

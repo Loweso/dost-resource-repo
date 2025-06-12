@@ -65,5 +65,31 @@ namespace project_backend.Controllers
 
             return NoContent();
         }
+
+        [HttpDelete("me")]
+        public async Task<IActionResult> DeleteCurrentUser()
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userIdClaim == null)
+            {
+                return Unauthorized(new { message = "User not authenticated" });
+            }
+
+            var userId = int.Parse(userIdClaim);
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null)
+            {
+                return NotFound(new { message = "User not found" });
+            }
+
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
+
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            HttpContext.Session.Clear();
+
+            return Ok(new { message = "Account deleted successfully" });
+        }
+
     }
 }

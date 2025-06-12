@@ -2,7 +2,8 @@ import toast, { Toaster } from "react-hot-toast";
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import axios, { AxiosError } from "axios";
+import api from "@/lib/api";
+import { AxiosError } from "axios";
 import { LoadingModal } from "../loadingModal";
 import { UserStore } from "@/store/user";
 
@@ -23,13 +24,9 @@ export default function LoginPage() {
     };
 
     try {
-      const response = await axios.post(
-        "http://localhost:5090/api/auth/login",
-        userData,
-        {
-          withCredentials: true,
-        }
-      );
+      const response = await api.post("/auth/login", userData, {
+        withCredentials: true,
+      });
 
       const userId = response.data?.userId;
       const userRole = response.data?.role;

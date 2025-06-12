@@ -1,5 +1,5 @@
 "use client";
-import axios from "axios";
+import api from "@/lib/api";
 import Image from "next/image";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -39,7 +39,7 @@ export default function EditProfileModal({
 
   const handleSubmit = async () => {
     try {
-      await axios.put(`http://localhost:5090/api/users/${id}`, {
+      await api.put(`/users/${id}`, {
         firstName,
         middleName,
         lastName,

@@ -6,6 +6,8 @@ import { FiEdit } from "react-icons/fi";
 import { TiUserDelete } from "react-icons/ti";
 import { FiLogOut } from "react-icons/fi";
 import EditProfileModal from "./EditProfileModal";
+import LogOutModal from "./LogOutModal";
+import DeactivateUserModal from "./DeactivateUserModal";
 
 type ProfileCardProps = {
   id: string;
@@ -18,6 +20,7 @@ type ProfileCardProps = {
   university: string;
   course: string;
   isVerified: boolean;
+  showActions?: boolean;
 };
 
 export default function ProfileCard({
@@ -31,8 +34,12 @@ export default function ProfileCard({
   university,
   course,
   isVerified,
+  showActions,
 }: ProfileCardProps) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isLogOutModalOpen, setIsLogOutModalOpen] = useState(false);
+  const [isDeactivateUserModalOpen, setIsDeactivateUserModalOpen] =
+    useState(false);
 
   return (
     <div className="max-w-3xl w-full mx-auto bg-white shadow-md rounded-2xl overflow-hidden flex flex-col sm:flex-row items-center sm:items-start">
@@ -48,6 +55,16 @@ export default function ProfileCard({
           university={university}
           course={course}
           onClose={() => setIsEditModalOpen(false)}
+        />
+      )}
+
+      {isLogOutModalOpen && (
+        <LogOutModal onCancel={() => setIsLogOutModalOpen(false)} />
+      )}
+
+      {isDeactivateUserModalOpen && (
+        <DeactivateUserModal
+          onCancel={() => setIsDeactivateUserModalOpen(false)}
         />
       )}
 
@@ -112,25 +129,33 @@ export default function ProfileCard({
           <span className="font-creato">{course}</span>
         </div>
 
-        <div className="pt-4 flex flex-row items-center justify-end md:justify-between space-y-2 md:space-y-0 md:space-x-4 gap-2">
-          <button
-            className="flex items-center gap-2 text-yellow-700 bg-yellow-100 p-2 rounded-xl hover:underline hover:bg-yellow-200 cursor-pointer"
-            onClick={() => setIsEditModalOpen(true)}
-          >
-            <FiEdit className="text-lg md:text-base" />
-            <span className="hidden md:inline font-creato">Edit Profile</span>
-          </button>
-          <button className="flex items-center gap-2 text-red-700 bg-red-100 p-2 rounded-xl hover:underline hover:bg-red-200 cursor-pointer">
-            <TiUserDelete className="text-lg md:text-base" />
-            <span className="hidden md:inline font-creato">
-              Deactivate Profile
-            </span>
-          </button>
-          <button className="flex items-center gap-2 text-gray-700 bg-gray-300 p-2 rounded-xl hover:underline hover:bg-gray-400 cursor-pointer">
-            <FiLogOut className="text-lg md:text-base" />
-            <span className="hidden md:inline font-creato">Log Out</span>
-          </button>
-        </div>
+        {showActions && (
+          <div className="pt-4 flex flex-row items-center justify-end md:justify-between space-y-2 md:space-y-0 md:space-x-4 gap-2">
+            <button
+              className="flex items-center gap-2 text-yellow-700 bg-yellow-100 p-2 rounded-xl hover:underline hover:bg-yellow-200 cursor-pointer"
+              onClick={() => setIsEditModalOpen(true)}
+            >
+              <FiEdit className="text-lg md:text-base" />
+              <span className="hidden md:inline font-creato">Edit Profile</span>
+            </button>
+            <button
+              className="flex items-center gap-2 text-red-700 bg-red-100 p-2 rounded-xl hover:underline hover:bg-red-200 cursor-pointer"
+              onClick={() => setIsDeactivateUserModalOpen(true)}
+            >
+              <TiUserDelete className="text-lg md:text-base" />
+              <span className="hidden md:inline font-creato">
+                Deactivate Profile
+              </span>
+            </button>
+            <button
+              className="flex items-center gap-2 text-gray-700 bg-gray-300 p-2 rounded-xl hover:underline hover:bg-gray-400 cursor-pointer"
+              onClick={() => setIsLogOutModalOpen(true)}
+            >
+              <FiLogOut className="text-lg md:text-base" />
+              <span className="hidden md:inline font-creato">Log Out</span>
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
