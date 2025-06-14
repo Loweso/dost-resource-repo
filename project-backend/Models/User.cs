@@ -1,4 +1,12 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
+
+public enum ApprovalStatus
+{
+    Pending,
+    Approved,
+    Rejected
+}
 
 namespace project_backend.Models
 {
@@ -41,4 +49,54 @@ namespace project_backend.Models
         public bool IsVerified { get; set; } = false;
 
     }
+
+    public class RequirementSet
+    {
+        [Key]
+        public int Id { get; set; }
+        [Required]
+        [MaxLength(100)]
+        public string Title { get; set; } = string.Empty;
+        public DateTime Deadline { get; set; }
+        public ICollection<Requirement> Requirements { get; set; } = new List<Requirement>();
+
+        public ICollection<UserRequirementSet> UserAssignments { get; set; } = new List<UserRequirementSet>();
+    }
+
+    public class UserRequirementSet
+    {
+        [Key]
+        public int Id { get; set; }
+        public int UserId { get; set; }
+        public User? User { get; set; }
+        public int RequirementSetId { get; set; }
+        public RequirementSet? RequirementSet { get; set; }
+    }
+
+    public class Requirement
+    {
+        [Key]
+        public int Id { get; set; }
+        [Required]
+        [MaxLength(100)]
+        public string Title { get; set; } = string.Empty;
+        public int RequirementSetId { get; set; }
+
+        [JsonIgnore]
+        public RequirementSet? RequirementSet { get; set; }
+    }
+
+    public class Submission
+    {
+        [Key]
+        public int Id { get; set; }
+        public int UserId { get; set; }
+        public User? User { get; set; }
+        public int RequirementId { get; set; }
+        public Requirement? Requirement { get; set; }
+        public string FilePath { get; set; } = string.Empty;
+        public DateTime SubmittedAt { get; set; }
+        public ApprovalStatus ApprovalStatus { get; set; } = ApprovalStatus.Pending;
+    }
+
 }

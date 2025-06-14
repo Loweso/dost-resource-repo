@@ -91,5 +91,17 @@ namespace project_backend.Controllers
             return Ok(new { message = "Account deleted successfully" });
         }
 
+        [HttpGet("simple")]
+        public async Task<IActionResult> GetAllUsersSimple()
+        {
+            var users = await _context.Users
+                .Where(u => u.Role == "Student")
+                .Select(u => new { u.Id, u.FirstName, u.LastName, u.YearLevel, u.ProfileImageUrl, u.IsVerified })
+                .ToListAsync();
+
+            return Ok(users);
+        }
+
+
     }
 }

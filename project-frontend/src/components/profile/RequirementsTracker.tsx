@@ -1,91 +1,92 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { BiSolidCommentError } from "react-icons/bi";
 
 type Requirement = {
   id: number;
-  name: string;
+  title: string;
   file?: File | null;
-  status: "Verified" | "Pending" | "Missing";
+  submissionStatus: "Verified" | "Pending" | "Missing";
   adminComment?: {
     text: string;
     author: string;
   };
 };
 
-type RequirementGroup = {
-  schoolYear: string;
-  semester: "1st Semester" | "2nd Semester";
-  deadline: Date;
+type RequirementSet = {
+  id: number;
+  title: string;
+  deadline: string;
   requirements: Requirement[];
 };
 
-const initialRequirementGroups: RequirementGroup[] = [
-  {
-    schoolYear: "2022-2023",
-    semester: "1st Semester",
-    deadline: new Date("2023-08-15"),
-    requirements: [
+type RequirementsTrackerProps = {
+  userId: string;
+};
+
+const ALLOWED_EXTENSIONS = ["pdf", "jpg", "jpeg", "png"];
+
+export default function RequirementsTracker({
+  userId,
+}: RequirementsTrackerProps) {
+  const [sets, setSets] = useState<RequirementSet[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Mocked dummy data for testing
+    const dummyData: RequirementSet[] = [
       {
         id: 1,
-        name: "Transcript of Records",
-        file: null,
-        status: "Missing",
-        adminComment: {
-          text: "File was blurry, please re-upload.",
-          author: "Ms. Santos",
-        },
+        title: "2025 First Semester Requirements",
+        deadline: "2025-06-30T23:59:59Z",
+        requirements: [
+          { id: 1, title: "Study Load", submissionStatus: "Missing" },
+          { id: 2, title: "True Copy of Grades", submissionStatus: "Verified" },
+        ],
       },
       {
         id: 2,
-        name: "Certificate of Enrollment",
-        file: null,
-        status: "Missing",
+        title: "2025 Midyear Requirements",
+        deadline: "2025-07-30T23:59:59Z",
+        requirements: [
+          { id: 3, title: "Internship Report", submissionStatus: "Pending" },
+        ],
       },
-    ],
-  },
-  {
-    schoolYear: "2022-2023",
-    semester: "2nd Semester",
-    deadline: new Date("2024-01-30"),
-    requirements: [
-      {
-        id: 3,
-        name: "ID Picture",
-        file: null,
-        status: "Missing",
-      },
-    ],
-  },
-];
+    ];
 
-export default function RequirementsTracker() {
-  const [requirementGroups, setRequirementGroups] = useState<
-    RequirementGroup[]
-  >(initialRequirementGroups);
+    setSets(dummyData);
+    setLoading(false);
+  }, [userId]);
 
   const handleFileChange = (
     e: React.ChangeEvent<HTMLInputElement>,
-    groupIndex: number,
+    setId: number,
     reqId: number
   ) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    setRequirementGroups((prevGroups) =>
-      prevGroups.map((group, gIdx) => {
-        if (gIdx !== groupIndex) return group;
+    const ext = file.name.split(".").pop()?.toLowerCase();
+    if (!ext || !ALLOWED_EXTENSIONS.includes(ext)) {
+      alert("Invalid file format.");
+      return;
+    }
+    setSets((prev) =>
+      prev.map((set) => {
+        if (set.id !== setId) return set;
         return {
-          ...group,
-          requirements: group.requirements.map((req) =>
-            req.id === reqId ? { ...req, file, status: "Pending" } : req
+          ...set,
+          requirements: set.requirements.map((req) =>
+            req.id === reqId
+              ? { ...req, file, submissionStatus: "Pending" }
+              : req
           ),
         };
       })
     );
   };
 
-  const getStatusColor = (status: Requirement["status"]) => {
+  const getStatusColor = (status: Requirement["submissionStatus"]) => {
     switch (status) {
       case "Verified":
         return "text-green-600";
@@ -98,12 +99,17 @@ export default function RequirementsTracker() {
     }
   };
 
-  const formatDate = (date: Date) =>
-    date.toLocaleDateString("en-US", {
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
       month: "long",
       day: "numeric",
     });
+  };
+
+  if (loading) {
+    return <div>Loading requirements...</div>;
+  }
 
   return (
     <div className="w-full md:p-6 bg-white md:shadow rounded-lg">
@@ -111,46 +117,47 @@ export default function RequirementsTracker() {
         Requirements Tracker
       </h2>
 
-      {requirementGroups.map((group, groupIndex) => (
-        <div key={`${group.schoolYear}-${group.semester}`} className="mb-8">
-          <div className="mb-2 md:mb-4">
-            <h3 className="text-lg font-semibold text-blue-800">
-              SY {group.schoolYear} – {group.semester}
-            </h3>
+      {sets.length === 0 && <p>No requirements assigned.</p>}
+
+      {sets.map((set) => (
+        <div key={set.id} className="mb-8">
+          <div className="mb-2">
+            <h3 className="text-lg font-semibold text-blue-800">{set.title}</h3>
             <p className="text-sm text-gray-500">
-              Deadline: {formatDate(group.deadline)}
+              Deadline: {formatDate(set.deadline)}
             </p>
           </div>
 
-          <div className="space-y-2 md:space-y-4">
-            {group.requirements.map((req) => (
+          <div className="space-y-2">
+            {set.requirements.map((req) => (
               <div
                 key={req.id}
                 className="flex flex-col gap-2 p-4 border rounded-md bg-gray-50"
               >
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                  <div className="flex-1 font-medium text-gray-700 font-creato text-sm md:text-base">
-                    {req.name}
+                  <div className="flex-1 font-semibold text-gray-700">
+                    {req.title}
                   </div>
 
                   <div>
                     <input
                       type="file"
-                      onChange={(e) => handleFileChange(e, groupIndex, req.id)}
+                      accept=".pdf,.jpg,.jpeg,.png"
+                      onChange={(e) => handleFileChange(e, set.id, req.id)}
                       className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4
                         file:rounded-full file:border-0
                         file:text-sm file:font-semibold
                         file:bg-blue-50 file:text-blue-700
-                        hover:file:bg-blue-100 cursor-pointer justify-self-end md:self-auto"
+                        hover:file:bg-blue-100 cursor-pointer"
                     />
                   </div>
 
                   <div
                     className={`text-sm font-semibold self-end sm:self-center ${getStatusColor(
-                      req.status
+                      req.submissionStatus
                     )}`}
                   >
-                    {req.status}
+                    {req.submissionStatus}
                   </div>
                 </div>
 
@@ -161,11 +168,9 @@ export default function RequirementsTracker() {
                       size={20}
                     />
                     <div>
-                      <span className="font-semibold font-vogue">
-                        Admin Comment:
-                      </span>{" "}
+                      <span className="font-semibold">Admin Comment:</span>{" "}
                       {req.adminComment.text}{" "}
-                      <span className="italic text-xs text-gray-600 font-creato">
+                      <span className="italic text-xs text-gray-600">
                         – {req.adminComment.author}
                       </span>
                     </div>

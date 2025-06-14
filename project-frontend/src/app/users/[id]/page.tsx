@@ -58,7 +58,8 @@ export default function ProfilePage() {
     <div className="flex flex-col w-full overflow-x-hidden">
       <Toaster />
       {loading && <LoadingModal />}
-      <div className="w-full h-screen py-16 px-4 flex flex-col justify-center items-center gap-4 md:gap-9">
+
+      <div className="w-full h-screen py-16 px-4 flex flex-col justify-center items-center gap-4 md:gap-9 overflow-x-hidden">
         <div className="absolute inset-0 ocean-bg"></div>
         <p className="text-5xl sm:text-7xl text-white font-vogue text-center">
           WELCOME!
@@ -70,7 +71,7 @@ export default function ProfilePage() {
       </div>
 
       <div className="w-full bg-white py-12 px-4 sm:px-8">
-        <RequirementsTracker />
+        {userProfile && <RequirementsTracker userId={userId} />}
       </div>
     </div>
   );
