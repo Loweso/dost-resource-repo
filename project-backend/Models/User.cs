@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 
 public enum ApprovalStatus
 {
+    Missing,
     Pending,
     Approved,
     Rejected
@@ -33,12 +34,12 @@ namespace project_backend.Models
         public string PasswordHash { get; set; } = string.Empty;
 
         [MaxLength(200)]
-        public string University { get; set; } = string.Empty;
+        public string University { get; set; } = "University of the Philippines Cebu";
 
         [MaxLength(150)]
         public string Course { get; set; } = string.Empty;
 
-        [Range(1, 4, ErrorMessage = "Year level must be between 1 and 4.")]
+        [Range(1, 8, ErrorMessage = "Year level must be between 1 and 8.")]
         public int YearLevel { get; set; }
 
         [Required]
@@ -46,7 +47,6 @@ namespace project_backend.Models
         public string Role { get; set; } = "Student";
 
         public string ProfileImageUrl { get; set; } = string.Empty;
-        public bool IsVerified { get; set; } = false;
 
     }
 
@@ -96,7 +96,7 @@ namespace project_backend.Models
         public Requirement? Requirement { get; set; }
         public string FilePath { get; set; } = string.Empty;
         public DateTime SubmittedAt { get; set; }
-        public ApprovalStatus ApprovalStatus { get; set; } = ApprovalStatus.Pending;
+        public ApprovalStatus ApprovalStatus { get; set; } = ApprovalStatus.Missing;
     }
 
 }

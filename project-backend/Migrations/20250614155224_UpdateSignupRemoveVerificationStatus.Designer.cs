@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using project_backend.Data;
 
@@ -11,9 +12,11 @@ using project_backend.Data;
 namespace project_backend.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20250614155224_UpdateSignupRemoveVerificationStatus")]
+    partial class UpdateSignupRemoveVerificationStatus
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -64,39 +67,6 @@ namespace project_backend.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("RequirementSets");
-                });
-
-            modelBuilder.Entity("project_backend.Models.Submission", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ApprovalStatus")
-                        .HasColumnType("int");
-
-                    b.Property<string>("FilePath")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("RequirementId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("SubmittedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RequirementId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Submissions");
                 });
 
             modelBuilder.Entity("project_backend.Models.User", b =>
@@ -190,25 +160,6 @@ namespace project_backend.Migrations
                         .IsRequired();
 
                     b.Navigation("RequirementSet");
-                });
-
-            modelBuilder.Entity("project_backend.Models.Submission", b =>
-                {
-                    b.HasOne("project_backend.Models.Requirement", "Requirement")
-                        .WithMany()
-                        .HasForeignKey("RequirementId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("project_backend.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Requirement");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("project_backend.Models.UserRequirementSet", b =>

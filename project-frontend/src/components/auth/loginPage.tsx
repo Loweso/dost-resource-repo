@@ -105,7 +105,7 @@ export default function LoginPage() {
             Log In
           </button>
         </form>
-        <p className="mt-4">
+        <p className="mt-4 text-sm">
           No account yet?{" "}
           <Link
             href="/signup"

@@ -87,7 +87,7 @@ export default function Navbar() {
 
       <button
         onClick={() => setMenuOpen(true)}
-        className="md:hidden fixed w-10 h-10 rounded-md bg-white shadow-md flex items-center justify-center text-gray-800 right-5 top-5"
+        className="md:hidden fixed w-10 h-10 rounded-md bg-white shadow-md flex items-center justify-center text-gray-800 right-5 top-5 z-40"
       >
         <FaBars className="w-5 h-5" />
       </button>

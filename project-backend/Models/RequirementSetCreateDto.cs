@@ -1,4 +1,4 @@
-public class RequirementSetCreateDto
+public class RequirementSetDto
 {
     public string Title { get; set; } = string.Empty;
     public DateTime Deadline { get; set; }

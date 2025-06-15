@@ -24,13 +24,13 @@ export default function AdminSidebar() {
       <div
         className={`fixed left-0 top-0 bottom-0 w-64 p-6 bg-gray-800 text-gray-100 transform ${
           isOpen ? "translate-x-0" : "-translate-x-full"
-        } top-0 transition-transform duration-300 ease-in-out sm:translate-x-0 sm:static sm:flex sm:flex-col w-64 z-10`}
+        } transition-transform duration-300 ease-in-out sm:translate-x-0 sm:static sm:flex sm:flex-col top-0 h-screen h-full z-10`}
       >
         <h2 className="text-xl font-creato ml-1 mb-6">Dashboard</h2>
         <ul className="flex flex-col sm:space-y-4">
           <li>
             <Link
-              href="#main"
+              href="/admin"
               className="p-2 block rounded-md hover:bg-gray-700"
             >
               Main Admin Panel

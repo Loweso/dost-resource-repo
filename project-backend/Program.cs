@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
-
+using CloudinaryDotNet;
+using Microsoft.Extensions.Options;
 using project_backend.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -37,6 +38,18 @@ builder.Services.AddCors(options =>
               .AllowCredentials();
     });
 });
+builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
+builder.Services.AddSingleton<Cloudinary>(provider =>
+{
+    var config = provider.GetRequiredService<IOptions<CloudinarySettings>>().Value;
+    var account = new CloudinaryDotNet.Account(
+        config.CloudName,
+        config.ApiKey,
+        config.ApiSecret
+    );
+    return new Cloudinary(account);
+});
+
 
 var app = builder.Build();
 
@@ -55,9 +68,16 @@ app.UseSession();
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Default route
+app.MapControllers();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
+
+public class CloudinarySettings
+{
+    public string CloudName { get; set; } = string.Empty;
+    public string ApiKey { get; set; } = string.Empty;
+    public string ApiSecret { get; set; } = string.Empty;
+}

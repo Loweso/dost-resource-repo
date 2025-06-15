@@ -1,7 +1,5 @@
 import Image from "next/image";
 import { useState } from "react";
-import { FaCheckCircle } from "react-icons/fa";
-import { ImCross } from "react-icons/im";
 import { FiEdit } from "react-icons/fi";
 import { TiUserDelete } from "react-icons/ti";
 import { FiLogOut } from "react-icons/fi";
@@ -19,7 +17,6 @@ type ProfileCardProps = {
   yearLevel: number;
   university: string;
   course: string;
-  isVerified: boolean;
   showActions?: boolean;
 };
 
@@ -33,7 +30,6 @@ export default function ProfileCard({
   yearLevel,
   university,
   course,
-  isVerified,
   showActions,
 }: ProfileCardProps) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -78,23 +74,6 @@ export default function ProfileCard({
             height={144}
             className="object-cover w-full h-full"
           />
-        </div>
-        <div className="flex items-center space-x-2">
-          {isVerified ? (
-            <>
-              <FaCheckCircle className="text-green-600 text-lg" />
-              <span className="text-green-700 font-medium text-sm">
-                Verified User
-              </span>
-            </>
-          ) : (
-            <>
-              <ImCross className="text-red-600 text-base" />
-              <span className="text-red-700 font-medium text-sm">
-                Unverified User
-              </span>
-            </>
-          )}
         </div>
       </div>
 

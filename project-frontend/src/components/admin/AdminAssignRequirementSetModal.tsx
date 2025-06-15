@@ -2,11 +2,9 @@
 
 import api from "@/lib/api";
 import Image from "next/image";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
-import { FaCheckCircle } from "react-icons/fa";
-import { FaCircleXmark } from "react-icons/fa6";
-import { BiSearch } from "react-icons/bi";
+import { LoadingModal } from "../loadingModal";
 
 type User = {
   id: number;
@@ -27,23 +25,36 @@ export default function AdminAssignRequirementsModal({
   requirementSetId,
   onClose,
 }: AdminAssignRequirementsModalProps) {
+  const [isLoading, setIsLoading] = useState(false);
   const [students, setStudents] = useState<User[]>([]);
   const [selectedStudentIds, setSelectedStudentIds] = useState<number[]>([]);
   const [filterYear, setFilterYear] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState<string>("");
 
   useEffect(() => {
-    fetchStudents();
-  }, []);
+    async function fetchStudents() {
+      setIsLoading(true);
+      try {
+        // first fetch all students
+        const res = await api.get("/Users/simple");
+        setStudents(res.data);
 
-  async function fetchStudents() {
-    try {
-      const res = await api.get("/Users/simple");
-      setStudents(res.data);
-    } catch (error) {
-      toast.error("Failed to fetch students.");
-      console.error("Failed to fetch students.", error);
+        // then fetch already assigned IDs
+        const assigned = await api.get(
+          `/RequirementSet/assign/${requirementSetId}`
+        );
+
+        setSelectedStudentIds(assigned.data);
+      } catch (error) {
+        toast.error("Failed to fetch students.");
+        console.error("Failed to fetch students.", error);
+      } finally {
+        setIsLoading(false);
+      }
     }
-  }
+
+    fetchStudents();
+  }, [requirementSetId]);
 
   const handleSelect = (id: number) => {
     setSelectedStudentIds((prev) =>
@@ -54,29 +65,25 @@ export default function AdminAssignRequirementsModal({
   function handleYearSelect(selection: string) {
     setFilterYear(selection);
     if (selection === "custom") {
-      // custom means we do NOT select anyone immediately
       setSelectedStudentIds([]);
     } else {
-      // filter first
       let eligible = students;
 
       if (selection === "5+") {
-        eligible = eligible.filter((s) => s.yearLevel >= 5 && s.isVerified);
+        eligible = eligible.filter((s) => s.yearLevel >= 5);
       } else if (selection) {
-        eligible = eligible.filter(
-          (s) => s.yearLevel.toString() === selection && s.isVerified
-        );
-      } else {
-        eligible = eligible.filter((s) => s.isVerified);
+        eligible = eligible.filter((s) => s.yearLevel.toString() === selection);
       }
-      // select all eligible IDs immediately
       setSelectedStudentIds(eligible.map((s) => s.id));
     }
   }
 
   const handleAssign = async () => {
+    setIsLoading(true);
+
     if (selectedStudentIds.length === 0) {
       toast.error("Please select at least 1 student.");
+      setIsLoading(false);
       return;
     }
     try {
@@ -84,38 +91,44 @@ export default function AdminAssignRequirementsModal({
         requirementSetId,
         studentIds: selectedStudentIds,
       });
+
       toast.success("Requirements successfully assigned.");
       onClose();
     } catch (error) {
       toast.error("Failed to assign requirements.");
       console.error("Failed to assign requirements.", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/[0.5] p-4">
-      <Toaster />
+      {isLoading && <LoadingModal />}
       <div className="bg-gray-100 p-6 rounded-md w-full h-full max-w-2xl">
         <h1 className="text-lg sm:text-xl font-semibold font-vogue leading-4">
           Assign Requirement Set to Students
         </h1>
         <p className="mb-2 sm:mb-4 mt-1 leading-4">
-          Only verified users can be made to comply requirements.
+          All students can be made to comply requirements.
         </p>
 
+        {/* Filter Section */}
         <div className="flex flex-wrap items-center gap-4 mb-4">
           <div className="flex flex-row justify-between items-center gap-2 w-full sm:w-auto">
             <input
               type="text"
               placeholder="Search student by name..."
               className="p-2 border rounded-md flex-1"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
             />
-            <button
+            {/* <button
               disabled
               className="text-black rounded-md text-2xl hover:text-gray-500 cursor-pointer"
             >
               <BiSearch />
-            </button>
+            </button> */}
           </div>
 
           <select
@@ -134,71 +147,56 @@ export default function AdminAssignRequirementsModal({
           </select>
         </div>
 
+        {/* Student List */}
         <ul className="flex-1 max-h-64 overflow-y-auto mb-4 space-y-2">
-          {students.filter((s) => {
-            if (filterYear === "" || filterYear === "custom") return true;
-            if (filterYear === "5+") return s.yearLevel >= 5;
-            return s.yearLevel.toString() === filterYear;
-          }).length === 0 ? (
-            <div className="p-4 text-center text-gray-500">
-              Oh no 😕 — there are no students to show.
-            </div>
-          ) : (
-            students
-              .filter((s) => {
-                if (filterYear === "" || filterYear === "custom") return true;
-                if (filterYear === "5+") return s.yearLevel >= 5;
-                return s.yearLevel.toString() === filterYear;
-              })
-              .map((s) => (
-                <li
-                  key={s.id}
-                  className="flex items-center p-2 bg-gray-200 rounded-md space-x-4"
-                >
-                  <input
-                    type="checkbox"
-                    disabled={!s.isVerified}
-                    checked={selectedStudentIds.includes(s.id)}
-                    onChange={() => handleSelect(s.id)}
-                  />
+          {students
+            .filter((s) => {
+              if (searchTerm) {
+                const fullName = `${s.firstName} ${s.lastName}`.toLowerCase();
+                if (!fullName.includes(searchTerm.toLowerCase())) return false;
+              }
+              if (filterYear === "" || filterYear === "custom") return true;
+              if (filterYear === "5+") return s.yearLevel >= 5;
+              return s.yearLevel.toString() === filterYear;
+            })
+            .map((s) => (
+              <li
+                key={s.id}
+                onClick={() => handleSelect(s.id)}
+                className={`flex items-center p-2 ${
+                  selectedStudentIds.includes(s.id)
+                    ? `bg-blue-200 hover:bg-blue-300`
+                    : `bg-gray-200 hover:bg-gray-300`
+                } rounded-md space-x-4 cursor-pointer`}
+              >
+                <input
+                  type="checkbox"
+                  readOnly
+                  checked={selectedStudentIds.includes(s.id)}
+                  onClick={(e) => e.stopPropagation()}
+                />
 
-                  <Image
-                    src={s.profileImageUrl || "/images/default_avatar.png"}
-                    width={40}
-                    height={40}
-                    alt={`${s.firstName} ${s.lastName}`}
-                    className="w-10 h-10 mr-2 rounded-full object-cover"
-                  />
+                <Image
+                  src={s.profileImageUrl || "/images/default_avatar.png"}
+                  width={40}
+                  height={40}
+                  alt={`${s.firstName} ${s.lastName}`}
+                  className="w-10 h-10 mr-2 rounded-full object-cover"
+                />
 
-                  <div className="flex flex-col">
-                    <span className="font-creato leading-4 text-sm sm:text-base">
-                      {s.firstName ? s.firstName : "N/A"} {s.lastName}
-                    </span>
-                    <span className="text-gray-500 text-xs sm:text-sm">
-                      Year Level: {s.yearLevel}
-                    </span>
-                  </div>
-
-                  <span className="ml-auto">
-                    {s.isVerified ? (
-                      <FaCheckCircle
-                        color="#4ade80"
-                        size={20}
-                        className="mr-2"
-                      />
-                    ) : (
-                      <FaCircleXmark
-                        color="#ef4444"
-                        size={20}
-                        className="mr-2"
-                      />
-                    )}
+                <div className="flex flex-col">
+                  <span className="font-creato leading-4 text-sm sm:text-base">
+                    {s.firstName ? s.firstName : "N/A"} {s.lastName}
                   </span>
-                </li>
-              ))
-          )}
+                  <span className="text-gray-500 text-xs sm:text-sm">
+                    Year Level: {s.yearLevel}
+                  </span>
+                </div>
+              </li>
+            ))}
         </ul>
 
+        {/* Actions */}
         <div className="flex w-full py-4 justify-end gap-4">
           <button
             onClick={handleAssign}

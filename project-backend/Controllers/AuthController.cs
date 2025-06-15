@@ -22,7 +22,7 @@ namespace project_backend.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register(UserSignupDto request)
+        public async Task<IActionResult> Register([FromBody] UserSignupDto request)
         {
             if (await _context.Users.AnyAsync(u => u.Email == request.Email))
                 return BadRequest("User already exists");
@@ -31,15 +31,19 @@ namespace project_backend.Controllers
 
             var user = new User
             {
+                FirstName = request.FirstName,
+                MiddleName = request.MiddleName,
+                LastName = request.LastName,
                 Email = request.Email,
                 PasswordHash = passwordHash,
+                University = request.University,
                 Role = "Student"
             };
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            return Ok("User registered");
+            return Ok("User registered successfully.");
         }
 
         [HttpPost("login")]
@@ -62,10 +66,8 @@ namespace project_backend.Controllers
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var principal = new ClaimsPrincipal(identity);
 
-            // Sign in user
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
-            // ✅ Store session values
             HttpContext.Session.SetString("userId", user.Id.ToString());
             HttpContext.Session.SetString("email", user.Email);
             HttpContext.Session.SetString("role", user.Role);

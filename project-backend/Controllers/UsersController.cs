@@ -39,7 +39,6 @@ namespace project_backend.Controllers
                 yearLevel = user.YearLevel,
                 university = user.University,
                 course = user.Course,
-                isVerified = user.IsVerified
             });
         }
 
@@ -96,7 +95,7 @@ namespace project_backend.Controllers
         {
             var users = await _context.Users
                 .Where(u => u.Role == "Student")
-                .Select(u => new { u.Id, u.FirstName, u.LastName, u.YearLevel, u.ProfileImageUrl, u.IsVerified })
+                .Select(u => new { u.Id, u.FirstName, u.LastName, u.YearLevel, u.ProfileImageUrl})
                 .ToListAsync();
 
             return Ok(users);

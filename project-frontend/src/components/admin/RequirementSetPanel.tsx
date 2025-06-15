@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { Toaster } from "react-hot-toast";
 import api from "@/lib/api";
 import { FaSearch } from "react-icons/fa";
 import { RiEdit2Fill } from "react-icons/ri";
@@ -68,9 +69,10 @@ export default function RequirementSetPanel() {
   };
 
   return (
-    <div className="flex min-h-screen w-screen sm:w-auto">
+    <div className="flex h-screen w-screen sm:w-auto">
       <AdminSidebar />
-      <div className="flex flex-col min-h-screen p-4 sm:p-6 md:p-10 items-center flex-1">
+      <Toaster />
+      <div className="flex-1 p-4 sm:p-6 md:p-10 overflow-y-auto">
         {isLoading && <LoadingModal />}
         {isAddReqSetModalOpen && (
           <AdminAddRequirementSetModal

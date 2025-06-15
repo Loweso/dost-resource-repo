@@ -15,7 +15,7 @@ public class RequirementSetController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> PostRequirementSet([FromBody] RequirementSetCreateDto dto)
+    public async Task<IActionResult> PostRequirementSet([FromBody] RequirementSetDto dto)
     {
         if (dto == null ||
             string.IsNullOrWhiteSpace(dto.Title) ||
@@ -50,7 +50,7 @@ public class RequirementSetController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, [FromBody] RequirementSetCreateDto dto)
+    public async Task<IActionResult> Update(int id, [FromBody] RequirementSetDto dto)
     {
         var set = await _context.RequirementSets
             .Include(r => r.Requirements)
@@ -64,7 +64,6 @@ public class RequirementSetController : ControllerBase
         set.Title = dto.Title;
         set.Deadline = dto.Deadline;
 
-        // Remove old requirements first
         _context.Requirements.RemoveRange(set.Requirements);
         set.Requirements = dto.Requirements
             .Select(r => new Requirement { Title = r })
@@ -89,12 +88,12 @@ public class RequirementSetController : ControllerBase
 
         return Ok("Requirement set successfully deleted.");
     }
-    
+
     [HttpGet]
     public async Task<IActionResult> GetRequirementSets([FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string searchTerm = "")
     {
         var query = _context.RequirementSets
-            .Include(rs => rs.Requirements) // if you need related requirements
+            .Include(rs => rs.Requirements)
             .AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(searchTerm))
@@ -105,7 +104,7 @@ public class RequirementSetController : ControllerBase
                 rs.Title.Contains(searchTerm) ||
                 rs.Requirements.Any(r => r.Title.Contains(searchTerm)));
         }
-    
+
         var total = await query.CountAsync();
 
         var requirementSets = await query
@@ -114,6 +113,91 @@ public class RequirementSetController : ControllerBase
             .ToListAsync();
 
         return Ok(new { total, data = requirementSets });
+    }
+
+    [HttpPost("assign")]
+    public async Task<IActionResult> AssignRequirements([FromBody] AssignRequirementsDto dto)
+    {
+        if (dto == null ||
+            dto.StudentIds == null ||
+            !dto.StudentIds.Any())
+        {
+            return BadRequest("Invalid data.");
+        }
+
+        var requirementSet = await _context.RequirementSets.FindAsync(dto.RequirementSetId);
+        if (requirementSet == null)
+        {
+            return NotFound("Requirement set not found.");
+        }
+
+        // Get all existing UserRequirementSets for this set
+        var existingAssignments = await _context.UserRequirementSets
+            .Where(ur => ur.RequirementSetId == requirementSet.Id)
+            .ToListAsync();
+
+        var existingUserIds = existingAssignments.Select(ur => ur.UserId).ToHashSet();
+
+        var newUserIds = dto.StudentIds.ToHashSet();
+
+        // Determine which to add
+        var toAdd = newUserIds.Except(existingUserIds);
+        // Determine which to remove
+        var toRemove = existingAssignments.Where(ur => !newUserIds.Contains(ur.UserId));
+
+        foreach (var studentId in toAdd)
+        {
+            _context.UserRequirementSets.Add(new UserRequirementSet
+            {
+                UserId = studentId,
+                RequirementSetId = requirementSet.Id
+            });
+        }
+        _context.UserRequirementSets.RemoveRange(toRemove);
+        await _context.SaveChangesAsync();
+
+        return Ok("Requirements successfully updated.");
+    }
+
+    [HttpGet("assign/{requirementSetId}")]
+    public async Task<IActionResult> GetAssignedStudents(int requirementSetId)
+    {
+        var assignedStudentIds = await _context.UserRequirementSets
+            .Where(ur => ur.RequirementSetId == requirementSetId)
+            .Select(ur => ur.UserId)
+            .ToListAsync();
+
+        return Ok(assignedStudentIds);
+    }
+
+    [HttpGet("user/{userId}")]
+    // Get REQUIREMENT SETS for a user as well as their SUBMISSIONS to that requirement set
+    public async Task<IActionResult> GetRequirementsForUser(int userId)
+    {
+        var sets = await _context.RequirementSets
+            .Where(rs => rs.UserAssignments.Any(ua => ua.UserId == userId))
+            .Select(rs => new
+            {
+                rs.Id,
+                rs.Title,
+                rs.Deadline,
+                Requirements = rs.Requirements.Select(r => new
+                {
+                    r.Id,
+                    r.Title,
+                    SubmissionStatus = _context.Submissions
+                        .Where(s => s.UserId == userId && s.RequirementId == r.Id)
+                        .Select(s => s.ApprovalStatus)
+                        .FirstOrDefault(),
+                    FilePath = _context.Submissions
+                        .Where(s => s.UserId == userId && s.RequirementId == r.Id)
+                        .Select(s => s.FilePath)
+                        .FirstOrDefault()
+                })
+            })
+            .ToListAsync();
+
+        return Ok(sets);
     }
 
 }
