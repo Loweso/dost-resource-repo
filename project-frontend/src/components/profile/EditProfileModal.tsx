@@ -3,6 +3,8 @@ import api from "@/lib/api";
 import Image from "next/image";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { AiFillPicture } from "react-icons/ai";
+import { LoadingModal } from "../loadingModal";
 
 type EditProfileModalProps = {
   id: string;
@@ -29,6 +31,7 @@ export default function EditProfileModal({
   course: initialCourse,
   onClose,
 }: EditProfileModalProps) {
+  const [isLoading, setIsLoading] = useState(false);
   const [firstName, setFirstName] = useState(initialFirstName);
   const [middleName, setMiddleName] = useState(initialMiddleName);
   const [lastName, setLastName] = useState(initialLastName);
@@ -36,17 +39,29 @@ export default function EditProfileModal({
   const [yearLevel, setYearLevel] = useState(initialYearLevel);
   const [university, setUniversity] = useState(initialUniversity);
   const [course, setCourse] = useState(initialCourse);
+  const [profilePictureFile, setProfilePictureFile] = useState<File | null>(
+    null
+  );
+  const [profilePicturePreview, setProfilePicturePreview] =
+    useState(profileImageUrl);
 
   const handleSubmit = async () => {
+    setIsLoading(true);
     try {
-      await api.put(`/users/${id}`, {
-        firstName,
-        middleName,
-        lastName,
-        email,
-        yearLevel,
-        university,
-        course,
+      const formData = new FormData();
+      formData.append("firstName", firstName);
+      formData.append("middleName", middleName);
+      formData.append("lastName", lastName);
+      formData.append("email", email);
+      formData.append("yearLevel", yearLevel.toString());
+      formData.append("university", university);
+      formData.append("course", course);
+      if (profilePictureFile) {
+        formData.append("profilePicture", profilePictureFile);
+      }
+
+      await api.put(`/users/${id}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
       });
 
       toast.success("Profile updated successfully!");
@@ -55,22 +70,46 @@ export default function EditProfileModal({
     } catch (error) {
       console.error("Update failed:", error);
       toast.error("Failed to update profile. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0] || null;
+    if (file) {
+      setProfilePictureFile(file);
+      setProfilePicturePreview(URL.createObjectURL(file));
+    }
+  }
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+      {isLoading && <LoadingModal />}
       <div className="bg-white w-full max-w-3xl h-2/3 rounded-2xl shadow-lg overflow-hidden flex flex-col sm:flex-row">
         <div className="flex flex-col items-center justify-center w-full md:w-1/3 p-3 md:p-6">
           <div className="w-24 h-24 md:w-36 md:h-36 rounded-full overflow-hidden border-4 border-blue-500 mb-3">
             <Image
-              src={profileImageUrl || "/images/default_avatar.png"}
+              src={profilePicturePreview || "/images/default_avatar.png"}
               alt="Profile Picture"
               width={144}
               height={144}
               className="object-cover w-full h-full"
             />
           </div>
+          <label
+            htmlFor="profilePicture"
+            className="flex items-center bg-lime-500 hover:bg-cyan-600 p-2 rounded-lg cursor-pointer text-white gap-2 sm:gap-4 leading-4 text-sm sm:text-base"
+          >
+            <AiFillPicture size={24} className="h-5" /> Change Profile Picture
+          </label>
+          <input
+            id="profilePicture"
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+            className="hidden"
+          />
         </div>
 
         <div className="h-full w-full flex flex-col p-4 md:p-8 bg-blue-50 text-xs sm:text-base border-t-2 sm:border-t-0 sm:border-l-2 space-y-3 overflow-y-auto">

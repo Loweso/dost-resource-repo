@@ -38,6 +38,21 @@ public class RequirementSetController : ControllerBase
         return CreatedAtAction(nameof(GetRequirementSet), new { id = requirementSet.Id }, requirementSet);
     }
 
+    [HttpGet("getAllSimple")]
+    public async Task<IActionResult> GetAllRequirement()
+    {
+        var requirementSets = await _context.RequirementSets
+            .Select(u => new
+            {
+                u.Id,
+                u.Title,
+                u.Deadline
+            })
+            .ToListAsync();
+
+        return Ok(requirementSets);
+    }
+
     [HttpGet("{id}")]
     public async Task<IActionResult> GetRequirementSet(int id)
     {
@@ -185,13 +200,22 @@ public class RequirementSetController : ControllerBase
                 {
                     r.Id,
                     r.Title,
-                    SubmissionStatus = _context.Submissions
+                    Submission = _context.Submissions
                         .Where(s => s.UserId == userId && s.RequirementId == r.Id)
-                        .Select(s => s.ApprovalStatus)
-                        .FirstOrDefault(),
-                    FilePath = _context.Submissions
-                        .Where(s => s.UserId == userId && s.RequirementId == r.Id)
-                        .Select(s => s.FilePath)
+                        .Select(s => new
+                        {
+                            s.ApprovalStatus,
+                            s.FilePath,
+                            Comments = _context.SubmissionComments
+                                .Where(c => c.SubmissionId == s.Id)
+                                .Select(c => new
+                                {
+                                    c.Id,
+                                    c.Content,
+                                    User = c.User == null ? null : new { c.User.FirstName, c.User.LastName }
+                                })
+                                .ToList()
+                        })
                         .FirstOrDefault()
                 })
             })

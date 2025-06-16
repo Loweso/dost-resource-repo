@@ -1,10 +1,6 @@
 "use client";
 
-import {
-  ApprovalStatus,
-  Requirement,
-  RequirementSet,
-} from "@/types/RequirementTypes";
+import { ApprovalStatus, Requirement, RequirementSet } from "@/types/types";
 import { BiSolidCommentError } from "react-icons/bi";
 import toast from "react-hot-toast";
 import { useState } from "react";
@@ -148,10 +144,10 @@ export default function RequirementItem({
           {requirement.title}
           <div
             className={`sm:hidden ml-4 font-semibold self-end sm:self-center font-coolvetica ${getStatusColor(
-              requirement.submissionStatus
+              requirement.submission?.approvalStatus ?? 0
             )}`}
           >
-            {getStatusLabel(requirement.submissionStatus)}
+            {getStatusLabel(requirement.submission?.approvalStatus ?? 0)}
           </div>
         </div>
 
@@ -174,7 +170,7 @@ export default function RequirementItem({
           </label>
         )}
 
-        {currentUserId === userId && requirement.filePath && (
+        {currentUserId === userId && requirement.submission?.filePath && (
           <label
             onClick={() => setIsViewSubmissionOpen(true)}
             className="px-4 py-2 font-semibold text-gray-700 bg-gray-200 rounded-full ml-2 hover:bg-gray-300 cursor-pointer"
@@ -185,28 +181,35 @@ export default function RequirementItem({
 
         <div
           className={`hidden sm:block text-sm font-semibold self-end sm:self-center ${getStatusColor(
-            requirement.submissionStatus
+            requirement.submission?.approvalStatus ?? 0
           )}`}
         >
-          {getStatusLabel(requirement.submissionStatus)}
+          {getStatusLabel(requirement.submission?.approvalStatus ?? 0)}
         </div>
       </div>
 
-      {requirement.adminComment && (
-        <div className="flex items-start gap-2 text-sm bg-yellow-50 p-2 rounded-md mt-2 border border-yellow-200">
-          <BiSolidCommentError
-            className="mt-0.5 text-yellow-600 w-12"
-            size={20}
-          />
-          <div>
-            <span className="font-semibold">Admin Comment:</span>{" "}
-            {requirement.adminComment.text}{" "}
-            <span className="italic text-xs text-gray-600">
-              – {requirement.adminComment.author}
-            </span>
+      {requirement.submission?.comments &&
+        requirement.submission.comments.length > 0 && (
+          <div className="flex flex-col gap-2 mt-2">
+            {requirement.submission.comments.map((comment) => (
+              <div
+                key={comment.id}
+                className="flex items-start gap-2 text-sm bg-yellow-50 p-2 rounded-md border border-yellow-300"
+              >
+                <BiSolidCommentError
+                  className="mt-0.5 text-yellow-600 w-12"
+                  size={20}
+                />
+                <div className="w-full flex-1">
+                  <span className="font-semibold">
+                    {comment.user?.firstName} {comment.user?.lastName}:
+                  </span>{" "}
+                  {comment.content}
+                </div>
+              </div>
+            ))}
           </div>
-        </div>
-      )}
+        )}
 
       {isPreviewModalOpen && (
         <FilePreviewModal
@@ -224,7 +227,7 @@ export default function RequirementItem({
       {isViewSubmissionOpen && (
         <ViewSubmissionModal
           isOpen={isViewSubmissionOpen}
-          filePath={requirement.filePath}
+          filePath={requirement.submission?.filePath}
           onDelete={handleDeleteSubmission}
           onClose={() => setIsViewSubmissionOpen(false)}
         />

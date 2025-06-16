@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const { isLoggedIn, userId } = UserStore();
+  const { isLoggedIn, userId, role } = UserStore();
   const [isMounted, setIsMounted] = useState(false);
 
   const router = useRouter();
@@ -47,15 +47,25 @@ export default function Navbar() {
           </Link>
 
           <div className="hidden md:flex items-center gap-6">
-            <Link href="/about" className="cursor-pointer">
-              <span className="text-gray-700 hover:text-black font-medium">
-                About
-              </span>
-            </Link>
             {!isLoggedIn && (
-              <Link href="/login" className="cursor-pointer">
+              <>
+                <Link href="/login" className="cursor-pointer">
+                  <span className="text-gray-700 hover:text-black font-medium">
+                    Log in
+                  </span>
+                </Link>
+                <Link href="/signup" className="cursor-pointer">
+                  <span className="text-gray-700 hover:text-black font-medium">
+                    Sign Up
+                  </span>
+                </Link>
+              </>
+            )}
+
+            {isLoggedIn && role === "Admin" && (
+              <Link href="/admin" className="cursor-pointer">
                 <span className="text-gray-700 hover:text-black font-medium">
-                  Log in
+                  Admin
                 </span>
               </Link>
             )}
@@ -112,22 +122,51 @@ export default function Navbar() {
               <p className="font-vogue text-xl">DOST SA UP CEBU</p>
             </div>
           </Link>
-          <div className="flex flex-col">
-            <Link
-              href="/about"
-              onClick={() => setMenuOpen(false)}
-              className="text-gray-700 text-lg font-medium"
-            >
-              About
-            </Link>
+          <div className="flex flex-col gap-2">
+            {!isLoggedIn && (
+              <>
+                <Link href="/login" className="cursor-pointer">
+                  <span className="text-gray-700 hover:text-black font-medium">
+                    Log in
+                  </span>
+                </Link>
+                <Link href="/signup" className="cursor-pointer">
+                  <span className="text-gray-700 hover:text-black font-medium">
+                    Sign Up
+                  </span>
+                </Link>
+              </>
+            )}
 
-            <Link
-              href="/login"
-              onClick={() => setMenuOpen(false)}
-              className="text-gray-700 text-lg font-medium"
-            >
-              Log in
-            </Link>
+            {isLoggedIn && role === "Admin" && (
+              <Link href="/admin" className="cursor-pointer">
+                <span className="text-gray-700 hover:text-black font-medium">
+                  Admin
+                </span>
+              </Link>
+            )}
+
+            {isLoggedIn && (
+              <button
+                className="w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center text-gray-600 cursor-pointer"
+                onClick={handleProfile}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="w-5 h-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 14a6 6 0 100-12 6 6 0 000 12zM4 20a8 8 0 1116 0H4z"
+                  />
+                </svg>
+              </button>
+            )}
           </div>
         </div>
       )}

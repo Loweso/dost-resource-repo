@@ -65,7 +65,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="relative h-screen w-screen flex items-center justify-center overflow-hidden">
+    <div className="relative h-screen max-w-screen flex items-center justify-center overflow-hidden">
       <Toaster />
       {isLoading && <LoadingModal />}
       <div className="absolute inset-0 ocean-bg"></div>

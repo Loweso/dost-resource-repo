@@ -90,5 +90,23 @@ public class SubmissionController : ControllerBase
 
         return Ok(new { message = "Submission removed successfully." });
     }
+    public class UpdateApprovalStatusDto
+    {
+        public ApprovalStatus ApprovalStatus { get; set; }
+    }
 
+    [HttpPut("ApprovalStatus/{id}")]
+    public async Task<IActionResult> UpdateApprovalStatus(int id, [FromBody] UpdateApprovalStatusDto dto)
+    {
+        var submission = await _context.Submissions.FindAsync(id);
+        if (submission == null)
+        {
+            return NotFound();
+        }
+        
+        submission.ApprovalStatus = dto.ApprovalStatus;
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
 }

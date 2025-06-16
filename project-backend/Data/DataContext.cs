@@ -16,5 +16,24 @@ namespace project_backend.Data
         public DbSet<UserRequirementSet> UserRequirementSets => Set<UserRequirementSet>();
 
         public DbSet<Submission> Submissions => Set<Submission>();
+
+        public DbSet<SubmissionComment> SubmissionComments => Set<SubmissionComment>();
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<SubmissionComment>()
+                .HasOne(sc => sc.Submission)
+                .WithMany()
+                .HasForeignKey(sc => sc.SubmissionId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<SubmissionComment>()
+                .HasOne(sc => sc.User)
+                .WithMany()
+                .HasForeignKey(sc => sc.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+        }
     }
 }

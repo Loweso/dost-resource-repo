@@ -1,5 +1,5 @@
 "use client";
-import { RequirementSet } from "@/types/RequirementTypes";
+import { RequirementSet } from "@/types/types";
 import RequirementItem from "./RequirementItem";
 
 type RequirementSetProps = {

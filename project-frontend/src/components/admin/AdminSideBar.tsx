@@ -46,10 +46,10 @@ export default function AdminSidebar() {
           </li>
           <li>
             <Link
-              href="#tracking"
+              href="/admin/requirement-tracker-panel"
               className="p-2 block rounded-md hover:bg-gray-700"
             >
-              Requirements Tracking Panel
+              Requirement Tracker Panel
             </Link>
           </li>
         </ul>

@@ -99,4 +99,26 @@ namespace project_backend.Models
         public ApprovalStatus ApprovalStatus { get; set; } = ApprovalStatus.Missing;
     }
 
+    public class SubmissionComment
+    {
+        [Key]
+        public int Id { get; set; }
+        
+        [Required]
+        public int SubmissionId { get; set; }
+        
+        [JsonIgnore]
+        public Submission? Submission { get; set; }
+        
+        [Required]
+        public int UserId { get; set; }
+        public User? User { get; set; }
+        
+        [Required]
+        [MaxLength(500)]
+        public string Content { get; set; } = string.Empty;
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    }
+
 }
