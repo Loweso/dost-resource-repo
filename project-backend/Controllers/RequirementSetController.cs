@@ -146,7 +146,6 @@ public class RequirementSetController : ControllerBase
             return NotFound("Requirement set not found.");
         }
 
-        // Get all existing UserRequirementSets for this set
         var existingAssignments = await _context.UserRequirementSets
             .Where(ur => ur.RequirementSetId == requirementSet.Id)
             .ToListAsync();
@@ -155,9 +154,7 @@ public class RequirementSetController : ControllerBase
 
         var newUserIds = dto.StudentIds.ToHashSet();
 
-        // Determine which to add
         var toAdd = newUserIds.Except(existingUserIds);
-        // Determine which to remove
         var toRemove = existingAssignments.Where(ur => !newUserIds.Contains(ur.UserId));
 
         foreach (var studentId in toAdd)
@@ -222,6 +219,51 @@ public class RequirementSetController : ControllerBase
             .ToListAsync();
 
         return Ok(sets);
+    }
+
+    [HttpGet("{requirementSetId}/students")]
+    public async Task<IActionResult> GetStudents(int requirementSetId, [FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string search = "")
+    {
+        if (page < 1) page = 1;
+        if (pageSize < 1) pageSize = 10;
+
+        var studentIds = await _context.UserRequirementSets
+            .Where(ur => ur.RequirementSetId == requirementSetId)
+            .Select(ur => ur.UserId)
+            .ToListAsync();
+
+        if (!studentIds.Any()) 
+            return Ok(new { total = 0, page, pageSize, students = new List<object>() });
+
+        var query = _context.Users.Where(u => studentIds.Contains(u.Id));
+
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            search = search.Trim().ToLower();
+            query = query.Where(u =>
+                u.FirstName.ToLower().Contains(search) ||
+                u.MiddleName.ToLower().Contains(search) ||
+                u.LastName.ToLower().Contains(search)); 
+        }
+  
+        var total = await query.CountAsync();
+
+        var studentRecords = await query
+            .OrderBy(u => u.LastName)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .Select(u => new
+            {
+                u.Id,
+                u.ProfileImageUrl,
+                u.FirstName,
+                u.MiddleName,
+                u.LastName,
+                u.YearLevel
+            })
+            .ToListAsync();
+
+        return Ok(new { total, page, pageSize, students = studentRecords });
     }
 
 }

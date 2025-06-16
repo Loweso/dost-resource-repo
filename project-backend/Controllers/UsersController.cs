@@ -15,136 +15,44 @@ namespace project_backend.Controllers
     [ApiController]
     [Route("api/[controller]")]
     public class UsersController : ControllerBase
-    {   
+    {
         private readonly Cloudinary _cloudinary;
         private readonly DataContext _context;
 
         public UsersController(Cloudinary cloudinary, DataContext context)
         {
             _cloudinary = cloudinary;
-
             _context = context;
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetUserById(int id)
-        {
-            var user = await _context.Users.FindAsync(id);
-
-            if (user == null)
-                return NotFound(new { message = "User not found" });
-
-            return Ok(new
-            {
-                profileImageUrl = user.ProfileImageUrl,
-                firstName = user.FirstName,
-                middleName = user.MiddleName,
-                lastName = user.LastName,
-                email = user.Email,
-                yearLevel = user.YearLevel,
-                university = user.University,
-                course = user.Course,
-            });
-        }
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUser(int id, [FromForm] IFormFile? profilePicture, [FromForm] string firstName, [FromForm] string lastName, [FromForm] string email, [FromForm] int yearLevel)
-        {
-            string? photoURL = null;
-            if (profilePicture != null && profilePicture.Length > 0)
-            {
-                using (var stream = profilePicture.OpenReadStream())
-                {
-                    var uploadParams = new ImageUploadParams
-                    {
-                        File = new FileDescription(profilePicture.FileName, stream)
-                    };
-                    var uploadResult = await _cloudinary.UploadAsync(uploadParams);
-                    photoURL = uploadResult.SecureUrl?.ToString();
-                }
-            }
-
-            var user = await _context.Users.FindAsync(id);
-            if (user == null) return NotFound();
-
-            if (photoURL != null) user.ProfileImageUrl = photoURL;
-            user.FirstName = firstName;
-            user.LastName = lastName;
-            user.Email = email;
-            user.YearLevel = yearLevel;
-
-            await _context.SaveChangesAsync();
-
-            return Ok("User updated.");
-        }
-
-        [HttpDelete("me")]
-        public async Task<IActionResult> DeleteCurrentUser()
-        {
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (userIdClaim == null)
-            {
-                return Unauthorized(new { message = "User not authenticated" });
-            }
-
-            var userId = int.Parse(userIdClaim);
-            var user = await _context.Users.FindAsync(userId);
-            if (user == null)
-            {
-                return NotFound(new { message = "User not found" });
-            }
-
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
-
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            HttpContext.Session.Clear();
-
-            return Ok(new { message = "Account deleted successfully" });
-        }
-
-        [HttpGet("simple")]
-        public async Task<IActionResult> GetAllUsersSimple()
-        {
-            var users = await _context.Users
-                .Where(u => u.Role == "Student")
-                .Select(u => new { u.Id, u.FirstName, u.LastName, u.YearLevel, u.ProfileImageUrl })
-                .ToListAsync();
-
-            return Ok(users);
-        }
-
-        [HttpGet("getAll")]
-        public async Task<IActionResult> GetAllStudents([FromQuery] int requirementSetId, [FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string search = "")
+        // GET /api/users
+        // Allows pagination, search and role filter
+        [HttpGet]
+        public async Task<IActionResult> GetUsers([FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string search = "", [FromQuery] string role = "")
         {
             if (page < 1) page = 1;
             if (pageSize < 1) pageSize = 10;
 
-            var studentIds = await _context.UserRequirementSets
-                .Where(ur => ur.RequirementSetId == requirementSetId)
-                .Select(ur => ur.UserId)
-                .ToListAsync();
+            var query = _context.Users.AsQueryable();
 
-            if (!studentIds.Any())
+            if (!string.IsNullOrWhiteSpace(role))
             {
-                return Ok(new { total = 0, page, pageSize, students = new List<object>() });
+                role = role.Trim();
+                query = query.Where(u => u.Role == role);
             }
-
-            var query = _context.Users
-                .Where(u => studentIds.Contains(u.Id));
-
             if (!string.IsNullOrWhiteSpace(search))
             {
                 search = search.Trim().ToLower();
                 query = query.Where(u =>
                     u.FirstName.ToLower().Contains(search) ||
                     u.MiddleName.ToLower().Contains(search) ||
-                    u.LastName.ToLower().Contains(search));
+                    u.LastName.ToLower().Contains(search) ||
+                    u.Email.ToLower().Contains(search));
             }
 
             var total = await query.CountAsync();
 
-            var studentRecords = await query
+            var users = await query
                 .OrderBy(u => u.LastName)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
@@ -155,28 +63,180 @@ namespace project_backend.Controllers
                     u.FirstName,
                     u.MiddleName,
                     u.LastName,
-                    u.YearLevel
+                    u.YearLevel,
+                    u.Role,
+                    u.Email
                 })
                 .ToListAsync();
 
-            return Ok(new { total, page, pageSize, students = studentRecords });
+            return Ok(new { total, page, pageSize, users });
         }
 
-        [HttpGet("{studentId}/requirements")]
-        public async Task<IActionResult> GetStudentRequirements(int studentId, [FromQuery] int requirementSetId)
+        // GET /api/users/{id}
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetUserById(int id)
         {
-            var student = await _context.Users.FindAsync(studentId);
-            if (student == null)
+            var user = await _context.Users.FindAsync(id);
+
+            if (user == null)
+                return NotFound(new { message = "User not found" });
+
+            return Ok(new
             {
-                return NotFound("Student not found.");
+                user.Id,
+                user.ProfileImageUrl,
+                user.FirstName,
+                user.MiddleName,
+                user.LastName,
+                user.Email,
+                user.YearLevel,
+                user.University,
+                user.Course,
+                user.Role
+            });
+        }
+
+        [HttpGet("all")]
+        public async Task<IActionResult> GetAllUsers()
+        {
+            var users = await _context.Users
+                .OrderBy(u => u.LastName)
+                .Select(u => new
+                {
+                    u.Id,
+                    u.ProfileImageUrl,
+                    u.FirstName,
+                    u.MiddleName,
+                    u.LastName,
+                    u.YearLevel,
+                    u.Role,
+                    u.Email
+                })
+                .ToListAsync();
+
+            return Ok(new { total = users.Count, users });
+        }
+
+        // POST /api/users
+        // To create a new User
+        [HttpPost]
+        public async Task<IActionResult> CreateUser([FromForm] IFormFile? profilePicture, [FromForm] string firstName, [FromForm] string lastName, [FromForm] string email, [FromForm] int yearLevel, [FromForm] string password)
+        {
+            if (string.IsNullOrWhiteSpace(password))
+            {
+                return BadRequest(new { message = "Password is required." });
             }
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                return BadRequest(new { message = "Email is required." });
+            }
+            if (await _context.Users.AnyAsync(u => u.Email == email))
+            {
+                return Conflict(new { message = "Email already in use." });
+            }
+
+            string? photoURL = null;
+            if (profilePicture != null && profilePicture.Length > 0)
+            {
+                using (var stream = profilePicture.OpenReadStream())
+                {
+                    var uploadParams = new ImageUploadParams { File = new FileDescription(profilePicture.FileName, stream) };
+                    var uploadResult = await _cloudinary.UploadAsync(uploadParams);
+                    photoURL = uploadResult.SecureUrl?.ToString();
+                }
+            }
+            var passwordHash = Convert.ToBase64String(SHA256.Create().ComputeHash(Encoding.UTF8.GetBytes(password)));
+            var newUser = new User
+            {
+                FirstName = firstName,
+                LastName = lastName,
+                Email = email,
+                PasswordHash = passwordHash,
+                YearLevel = yearLevel,
+                ProfileImageUrl = photoURL ?? string.Empty,
+                Role = "Student"
+            };
+            _context.Users.Add(newUser);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetUserById), new { id = newUser.Id },
+                                   new { message = "User successfully created.", id = newUser.Id });
+        }
+
+        // PUT /api/users/{id} 
+        // Update whole entity
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateUser(int id, [FromForm] UpdateUserDto dto)
+        {
+            var user = await _context.Users.FindAsync(id);
+            if (user == null) return NotFound();
+
+            string? photoURL = null;
+            if (dto.ProfilePicture != null && dto.ProfilePicture.Length > 0)
+            {
+                using (var stream = dto.ProfilePicture.OpenReadStream())
+                {
+                    var uploadParams = new ImageUploadParams { File = new FileDescription(dto.ProfilePicture.FileName, stream) };
+                    var uploadResult = await _cloudinary.UploadAsync(uploadParams);
+                    photoURL = uploadResult.SecureUrl?.ToString();
+                }
+            }
+            if (photoURL != null)
+                user.ProfileImageUrl = photoURL;
+
+            user.FirstName = dto.FirstName;
+            user.MiddleName = dto.MiddleName;
+            user.LastName = dto.LastName;
+            user.Email = dto.Email;
+            user.YearLevel = dto.YearLevel;
+            user.University = dto.University;
+            user.Course = dto.Course;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "User updated successfully" });
+        }
+
+        // PATCH /api/users/{id}
+        // Update role or partial
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> UpdateUserPartially(int id, [FromBody] PatchUserDto dto)
+        {
+            if (dto.AdminId <= 0 ||
+                string.IsNullOrWhiteSpace(dto.Password) ||
+                string.IsNullOrWhiteSpace(dto.Role))
+            {
+                return BadRequest(new { message = "AdminId, password, and role are required." });
+            }
+
+            var admin = await _context.Users.FindAsync(dto.AdminId);
+            if (admin == null) return Unauthorized(new { message = "Invalid adminId." });
+
+            if (admin.PasswordHash != ComputeHash(dto.Password))
+                return Unauthorized(new { message = "Invalid password." });
+
+            var user = await _context.Users.FindAsync(id);
+            if (user == null) return NotFound();
+
+            user.Role = dto.Role;
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "User role updated successfully." });
+        }
+
+        // GET /api/users/{id}/requirements
+        [HttpGet("{id}/requirements")]
+        public async Task<IActionResult> GetStudentRequirements(int id, [FromQuery] int requirementSetId)
+        {
+            var student = await _context.Users.FindAsync(id);
+            if (student == null) return NotFound("Student not found.");
 
             var requirements = await _context.Requirements
                 .Where(r => r.RequirementSetId == requirementSetId)
                 .ToListAsync();
 
             var submissions = await _context.Submissions
-                .Where(s => s.UserId == studentId && requirements.Select(r => r.Id).Contains(s.RequirementId))
+                .Where(s => s.UserId == id && requirements.Select(r => r.Id).Contains(s.RequirementId))
                 .ToListAsync();
 
             var result = requirements.Select(r => new
@@ -192,71 +252,55 @@ namespace project_backend.Controllers
             return Ok(result);
         }
 
-        [HttpGet("search")]
-        public async Task<IActionResult> SearchUsers([FromQuery] string searchTerm)
+        // DELETE /api/users/{id}
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteUser(int id)
         {
-            if (string.IsNullOrWhiteSpace(searchTerm))
-            {
-                return BadRequest(new { message = "Search term is required." });
-            }
-            searchTerm = searchTerm.Trim().ToLower();
-
-            var matchingUsers = await _context.Users
-                .Where(u =>
-                    u.FirstName.ToLower().Contains(searchTerm) ||
-                    u.MiddleName.ToLower().Contains(searchTerm) ||
-                    u.LastName.ToLower().Contains(searchTerm))
-                .Select(u => new
-                {
-                    u.Id,
-                    u.ProfileImageUrl,
-                    u.FirstName,
-                    u.MiddleName,
-                    u.LastName,
-                    u.YearLevel,
-                    u.Role
-                })
-                .ToListAsync();
-
-            return Ok(matchingUsers);
-        }
-        
-        [HttpPatch("{id}/role")]
-        public async Task<IActionResult> UpdateUserRole(int id, [FromBody] UpdateRoleDto dto)
-        {
-            if (string.IsNullOrWhiteSpace(dto.Role))
-            {
-                return BadRequest(new { message = "Role is required." });
-            }
-            if (string.IsNullOrWhiteSpace(dto.Password))
-            {
-                return BadRequest(new { message = "Password is required." });
-            }
-            
             var user = await _context.Users.FindAsync(id);
-            if (user == null)
-            {
-                return NotFound(new { message = "User not found." });
-            }
-            
-            var passwordHash = Convert.ToBase64String(SHA256.Create().ComputeHash(Encoding.UTF8.GetBytes(dto.Password)));
-            if (user.PasswordHash != passwordHash)
-            {
-                return Unauthorized(new { message = "Invalid password." });
-            }
-            
-            user.Role = dto.Role;
-            _context.Users.Update(user);
+            if (user == null) return NotFound();
+
+            _context.Users.Remove(user);
             await _context.SaveChangesAsync();
 
-            return Ok(new { message = "User role updated successfully." });
+            return Ok(new { message = "User successfully removed." });
         }
 
-        public class UpdateRoleDto
+        // DELETE /api/users/me
+        [HttpDelete("me")]
+        public async Task<IActionResult> DeleteCurrentUser()
         {
-            public string Role { get; set; } = string.Empty;
-            public string Password { get; set; } = string.Empty;
-        }
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userIdClaim == null)
+            {
+                return Unauthorized(new { message = "User not authenticated" });
+            }
+            var userId = int.Parse(userIdClaim);
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null) return NotFound();
 
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
+
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            HttpContext.Session.Clear();
+
+            return Ok(new { message = "Account successfully removed." });
+        }
+        
+        private string ComputeHash(string password)
+        {
+            using var sha256 = SHA256.Create();
+            var bytes = Encoding.UTF8.GetBytes(password);
+            var hash = sha256.ComputeHash(bytes);
+            return Convert.ToBase64String(hash);
+        }
     }
+}
+
+public class PatchUserDto
+{
+    public int AdminId { get; set; }
+    public string Role { get; set; } = string.Empty;
+    public string Password { get; set; } = string.Empty;
+
 }

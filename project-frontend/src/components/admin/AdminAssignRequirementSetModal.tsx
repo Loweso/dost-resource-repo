@@ -35,9 +35,10 @@ export default function AdminAssignRequirementsModal({
     async function fetchStudents() {
       setIsLoading(true);
       try {
-        // first fetch all students
-        const res = await api.get("/Users/simple");
-        setStudents(res.data);
+        const res = await api.get("/Users/all");
+        setStudents(res.data.users);
+
+        console.log(res.data);
 
         // then fetch already assigned IDs
         const assigned = await api.get(

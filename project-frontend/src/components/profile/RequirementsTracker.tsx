@@ -21,7 +21,6 @@ export default function RequirementsTracker({
       setLoading(true);
       try {
         const res = await api.get(`/RequirementSet/user/${id}`);
-        console.log(res.data);
         setSets(res.data);
       } catch (error) {
         console.error(error);

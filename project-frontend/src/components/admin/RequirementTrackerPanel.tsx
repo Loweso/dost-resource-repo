@@ -58,10 +58,12 @@ export default function RequirementTrackerPanel() {
       setIsLoading(true);
       try {
         const res = await api.get(
-          `/Users/getAll?requirementSetId=${selectedRequirementSetId}&page=${currentPage}&pageSize=${pageSize}&search=${encodeURIComponent(
-            searchQuery
-          )}`
+          `/requirementset/${selectedRequirementSetId}/students`,
+          {
+            params: { page: currentPage, pageSize, search: searchQuery },
+          }
         );
+        console.log(res.data);
         setStudents(res.data.students);
         setTotal(res.data.total);
       } catch (error) {

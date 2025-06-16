@@ -7,6 +7,7 @@ import { LoadingModal } from "../loadingModal";
 import AdminSidebar from "./AdminSideBar";
 import { FaKey } from "react-icons/fa";
 import Image from "next/image";
+import { UserStore } from "@/store/user";
 
 type User = {
   id: number;
@@ -19,6 +20,7 @@ type User = {
 };
 
 export default function MainAdminPanel() {
+  const { isLoggedIn, userId } = UserStore();
   const [isLoading, setIsLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [users, setUsers] = useState<User[]>([]);
@@ -26,6 +28,10 @@ export default function MainAdminPanel() {
   const [newRole, setNewRole] = useState<string>("Student");
   const [password, setPassword] = useState<string>("");
   const [confirmPass, setConfirmPass] = useState<string>("");
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
+  const [totalPages, setTotalPages] = useState(0);
 
   async function handleSearch() {
     if (!searchTerm.trim()) {
@@ -35,11 +41,13 @@ export default function MainAdminPanel() {
 
     setIsLoading(true);
     try {
-      const res = await api.get("/Users/search", {
-        params: { searchTerm },
+      setCurrentPage(1);
+      const res = await api.get("/users", {
+        params: { search: searchTerm, page: currentPage, pageSize },
       });
       console.log(res.data);
-      setUsers(res.data || []);
+      setUsers(res.data.users || []);
+      setTotalPages(Math.ceil(res.data.total / pageSize));
     } catch (error) {
       console.error(error);
       toast.error("Failed to search.");
@@ -49,6 +57,10 @@ export default function MainAdminPanel() {
   }
 
   async function handleFinalizeRole(id: number) {
+    if (!isLoggedIn) {
+      toast.error("Please log in.");
+      return;
+    }
     if (newRole === "") {
       toast.error("Please select a role.");
       return;
@@ -59,12 +71,21 @@ export default function MainAdminPanel() {
     }
 
     try {
-      await api.patch(`/Users/${id}/role`, { role: newRole, password });
+      setIsLoading(true);
+      console.log(password);
+      await api.patch(`/users/${id}`, {
+        adminId: userId,
+        role: newRole,
+        password,
+      });
       toast.success("User role updated.");
       setSelectedUser(null);
+      window.location.reload();
     } catch (error) {
       console.error(error);
       toast.error("Failed to update role.");
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -129,6 +150,27 @@ export default function MainAdminPanel() {
                 </button>
               </div>
             ))}
+            <div className="flex justify-center gap-2 mt-4">
+              <button
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                className="p-2 bg-blue-500 text-white rounded disabled:opacity-50"
+              >
+                Prev
+              </button>
+              <span className="p-2">
+                Page {currentPage} of {totalPages}
+              </span>
+              <button
+                disabled={currentPage === totalPages}
+                onClick={() =>
+                  setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                }
+                className="p-2 bg-blue-500 text-white rounded disabled:opacity-50"
+              >
+                Next
+              </button>
+            </div>
           </div>
         ) : (
           <p className="p-4 text-center">No results</p>
