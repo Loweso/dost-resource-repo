@@ -1,3 +1,4 @@
+import ArticlesPreview from "@/components/articlesPreview";
 import Image from "next/image";
 
 export default function Home() {
@@ -12,6 +13,9 @@ export default function Home() {
           className="w-full"
         />
       </main>
+      <section>
+        <ArticlesPreview />
+      </section>
       <section className="flex flex-col items-center w-full h-screen ocean-bg mt-0 md:mt-16 p-8 md:p-32 gap-4">
         <Image
           src="/images/logo.png"

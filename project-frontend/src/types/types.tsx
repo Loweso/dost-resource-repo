@@ -41,3 +41,10 @@ export type SimpleStudent = {
   lastName: string;
   yearLevel: number;
 };
+
+export type Article = {
+  id: number;
+  title: string;
+  content: string;
+  pictureUrl: string;
+};

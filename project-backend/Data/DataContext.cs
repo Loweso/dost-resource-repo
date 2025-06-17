@@ -19,6 +19,8 @@ namespace project_backend.Data
 
         public DbSet<SubmissionComment> SubmissionComments => Set<SubmissionComment>();
 
+        public DbSet<Article> Articles => Set<Article>();
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -27,7 +29,7 @@ namespace project_backend.Data
                 .HasOne(sc => sc.Submission)
                 .WithMany()
                 .HasForeignKey(sc => sc.SubmissionId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<SubmissionComment>()
                 .HasOne(sc => sc.User)

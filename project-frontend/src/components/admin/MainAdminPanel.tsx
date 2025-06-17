@@ -95,7 +95,7 @@ export default function MainAdminPanel() {
       <Toaster />
       <div className="flex-1 p-4 sm:p-6 md:p-10 mt-16 overflow-y-auto">
         {isLoading && <LoadingModal />}
-        <h2 className="text-lg sm:text-2xl font-vogue">Main Admin Panel</h2>
+        <h2 className="text-lg sm:text-2xl font-vogue">Permissions Panel</h2>
         <p className="text-xs sm:text-base mb-2 sm:mb-4">
           For users you might want to provide Admin access, you may search for
           them here.
@@ -215,6 +215,7 @@ export default function MainAdminPanel() {
                       onChange={(e) => setNewRole(e.target.value)}
                     >
                       <option value="Student">Student</option>
+                      <option value="StudentAdmin">Student-Admin</option>
                       <option value="Admin">Admin</option>
                     </select>
                   </label>

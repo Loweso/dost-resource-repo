@@ -43,7 +43,7 @@ namespace project_backend.Models
         public int YearLevel { get; set; }
 
         [Required]
-        [MaxLength(10)]
+        [MaxLength(12)]
         public string Role { get; set; } = "Student";
 
         public string ProfileImageUrl { get; set; } = string.Empty;

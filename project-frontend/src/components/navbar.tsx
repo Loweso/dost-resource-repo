@@ -47,6 +47,12 @@ export default function Navbar() {
           </Link>
 
           <div className="hidden md:flex items-center gap-6">
+            <Link href="/articles" className="cursor-pointer">
+              <span className="text-gray-700 hover:text-black font-medium">
+                Articles
+              </span>
+            </Link>
+
             {!isLoggedIn && (
               <>
                 <Link href="/login" className="cursor-pointer">
@@ -62,8 +68,11 @@ export default function Navbar() {
               </>
             )}
 
-            {isLoggedIn && role === "Admin" && (
-              <Link href="/admin" className="cursor-pointer">
+            {isLoggedIn && (role === "Admin" || role === "StudentAdmin") && (
+              <Link
+                href="/admin/content-management-panel"
+                className="cursor-pointer"
+              >
                 <span className="text-gray-700 hover:text-black font-medium">
                   Admin
                 </span>
@@ -123,14 +132,32 @@ export default function Navbar() {
             </div>
           </Link>
           <div className="flex flex-col gap-2">
+            <Link
+              onClick={() => setMenuOpen(false)}
+              href="/articles"
+              className="cursor-pointer"
+            >
+              <span className="text-gray-700 hover:text-black font-medium">
+                Articles
+              </span>
+            </Link>
+
             {!isLoggedIn && (
               <>
-                <Link href="/login" className="cursor-pointer">
+                <Link
+                  onClick={() => setMenuOpen(false)}
+                  href="/login"
+                  className="cursor-pointer"
+                >
                   <span className="text-gray-700 hover:text-black font-medium">
                     Log in
                   </span>
                 </Link>
-                <Link href="/signup" className="cursor-pointer">
+                <Link
+                  onClick={() => setMenuOpen(false)}
+                  href="/signup"
+                  className="cursor-pointer"
+                >
                   <span className="text-gray-700 hover:text-black font-medium">
                     Sign Up
                   </span>
@@ -138,8 +165,12 @@ export default function Navbar() {
               </>
             )}
 
-            {isLoggedIn && role === "Admin" && (
-              <Link href="/admin" className="cursor-pointer">
+            {isLoggedIn && (role === "Admin" || role === "StudentAdmin") && (
+              <Link
+                onClick={() => setMenuOpen(false)}
+                href="/admin/content-management-panel"
+                className="cursor-pointer"
+              >
                 <span className="text-gray-700 hover:text-black font-medium">
                   Admin
                 </span>

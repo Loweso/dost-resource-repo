@@ -3,9 +3,15 @@
 import Link from "next/link";
 import { useState } from "react";
 import { IoSettingsSharp, IoSettingsOutline } from "react-icons/io5";
+import { UserStore } from "@/store/user";
 
 export default function AdminSidebar() {
+  const { role } = UserStore();
   const [isOpen, setIsOpen] = useState(false);
+
+  if (role === "StudentAdmin") {
+    return null;
+  }
 
   return (
     <>
@@ -30,15 +36,15 @@ export default function AdminSidebar() {
         <ul className="flex flex-col sm:space-y-4">
           <li>
             <Link
-              href="/admin"
+              href="/admin/content-management-panel"
               className="p-2 block rounded-md hover:bg-gray-700"
             >
-              Main Admin Panel
+              Content Management Panel
             </Link>
           </li>
           <li>
             <Link
-              href="/admin/requirement-set-panel"
+              href="/admin/main/requirement-set-panel"
               className="p-2 block rounded-md hover:bg-gray-700"
             >
               Requirement Set Panel
@@ -46,10 +52,18 @@ export default function AdminSidebar() {
           </li>
           <li>
             <Link
-              href="/admin/requirement-tracker-panel"
+              href="/admin/main/requirement-tracker-panel"
               className="p-2 block rounded-md hover:bg-gray-700"
             >
               Requirement Tracker Panel
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/admin/main/permissions-panel"
+              className="p-2 block rounded-md hover:bg-gray-700"
+            >
+              Permissions Panel
             </Link>
           </li>
         </ul>
