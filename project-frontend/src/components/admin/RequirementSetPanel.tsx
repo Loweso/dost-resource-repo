@@ -54,11 +54,12 @@ export default function RequirementSetPanel() {
   ) => {
     setIsLoading(true);
     try {
-      const res = await api.get("/RequirementSet", {
-        params: { pageNumber: page, pageSize, searchTerm },
+      const res = await api.get("/requirementset", {
+        params: { page, pageSize, searchTerm },
       });
 
-      setFilteredSets(res.data.data);
+      console.log(res.data);
+      setFilteredSets(res.data.requirementSets);
       setCurrentPage(res.data.pageNumber);
       setTotalItems(res.data.total);
     } catch (err) {

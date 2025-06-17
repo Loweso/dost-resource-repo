@@ -17,10 +17,10 @@ export default function RequirementsTracker({
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchRequirementsForStudent(id: string) {
+    async function fetchRequirementsForStudent(userId: string) {
       setLoading(true);
       try {
-        const res = await api.get(`/RequirementSet/user/${id}`);
+        const res = await api.get(`/users/${userId}/requirementsets`);
         setSets(res.data);
       } catch (error) {
         console.error(error);

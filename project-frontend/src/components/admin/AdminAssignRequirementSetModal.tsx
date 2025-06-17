@@ -38,14 +38,14 @@ export default function AdminAssignRequirementsModal({
         const res = await api.get("/Users/all");
         setStudents(res.data.users);
 
-        console.log(res.data);
-
         // then fetch already assigned IDs
         const assigned = await api.get(
-          `/RequirementSet/assign/${requirementSetId}`
+          `/requirementset/${requirementSetId}/studentIds`
         );
 
-        setSelectedStudentIds(assigned.data);
+        console.log(assigned.data.studentIds);
+
+        setSelectedStudentIds(assigned.data.studentIds ?? []);
       } catch (error) {
         toast.error("Failed to fetch students.");
         console.error("Failed to fetch students.", error);
@@ -87,10 +87,10 @@ export default function AdminAssignRequirementsModal({
       setIsLoading(false);
       return;
     }
+
     try {
-      await api.post("/RequirementSet/assign", {
-        requirementSetId,
-        studentIds: selectedStudentIds,
+      await api.put(`/RequirementSet/${requirementSetId}/assign-students`, {
+        StudentIds: selectedStudentIds,
       });
 
       toast.success("Requirements successfully assigned.");
@@ -165,6 +165,7 @@ export default function AdminAssignRequirementsModal({
                 key={s.id}
                 onClick={() => handleSelect(s.id)}
                 className={`flex items-center p-2 ${
+                  selectedStudentIds.length > 0 &&
                   selectedStudentIds.includes(s.id)
                     ? `bg-blue-200 hover:bg-blue-300`
                     : `bg-gray-200 hover:bg-gray-300`

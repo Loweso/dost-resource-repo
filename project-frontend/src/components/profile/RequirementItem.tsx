@@ -89,9 +89,7 @@ export default function RequirementItem({
 
     setIsLoading(true);
     try {
-      await api.delete("/Submission/delete", {
-        data: { setId, reqId: requirement.id, userId },
-      });
+      await api.delete(`/Submission/delete/${requirement.id}`);
       toast.success("Submission successfully removed.");
 
       setSets((prev) =>
@@ -111,6 +109,8 @@ export default function RequirementItem({
           };
         })
       );
+
+      window.location.reload();
     } catch (error) {
       toast.error("Failed to delete submission.");
       console.error("Failed to delete submission:", error);

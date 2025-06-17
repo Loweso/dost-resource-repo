@@ -33,7 +33,7 @@ export default function RequirementTrackerPanel() {
   useEffect(() => {
     async function fetchRequirementSets() {
       try {
-        const res = await api.get("/RequirementSet/getAllSimple");
+        const res = await api.get("/requirementset/allSimple");
 
         setRequirementSets(res.data);
         if (res.data.length > 0) {
@@ -63,7 +63,7 @@ export default function RequirementTrackerPanel() {
             params: { page: currentPage, pageSize, search: searchQuery },
           }
         );
-        console.log(res.data);
+        console.log("Here:", res.data);
         setStudents(res.data.students);
         setTotal(res.data.total);
       } catch (error) {

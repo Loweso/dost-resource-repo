@@ -2,7 +2,7 @@ import { FaEnvelope, FaFacebookF } from "react-icons/fa";
 
 export default function Footer() {
   return (
-    <footer className="flex justify-center items-center gap-4 p-4 bg-gray-50">
+    <footer className="flex max-w-screen justify-center items-center gap-4 p-4 bg-gray-50 bottom-0">
       <a
         aria-label="Email us"
         href="dostupcebu.sa@gmail.com"

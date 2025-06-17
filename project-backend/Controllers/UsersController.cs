@@ -117,6 +117,44 @@ namespace project_backend.Controllers
             return Ok(new { total = users.Count, users });
         }
 
+        [HttpGet("{userId}/requirementsets")]
+        public async Task<IActionResult> GetForUser(int userId)
+        {
+            var sets = await _context.RequirementSets
+                .Where(rs => rs.UserAssignments.Any(ua => ua.UserId == userId))
+                .Select(rs => new
+                {
+                    rs.Id,
+                    rs.Title,
+                    rs.Deadline,
+                    Requirements = rs.Requirements.Select(r => new
+                    {
+                        r.Id,
+                        r.Title,
+                        Submission = _context.Submissions
+                            .Where(s => s.UserId == userId && s.RequirementId == r.Id)
+                            .Select(s => new
+                            {
+                                s.ApprovalStatus,
+                                s.FilePath,
+                                Comments = _context.SubmissionComments
+                                    .Where(c => c.SubmissionId == s.Id)
+                                    .Select(c => new
+                                      {
+                                    c.Id,
+                                    c.Content,
+                                    User = c.User == null ? null : new { c.User.FirstName, c.User.LastName }
+                                    })
+                                    .ToList()
+                            })
+                            .FirstOrDefault()
+                    })
+                })
+                .ToListAsync();
+
+            return Ok(sets);
+        }
+
         // POST /api/users
         // To create a new User
         [HttpPost]
