@@ -6,6 +6,7 @@ using CloudinaryDotNet.Actions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -18,11 +19,13 @@ namespace project_backend.Controllers
     {
         private readonly Cloudinary _cloudinary;
         private readonly DataContext _context;
+        private readonly PasswordHasher<User> _hasher;
 
-        public UsersController(Cloudinary cloudinary, DataContext context)
+        public UsersController(Cloudinary cloudinary, DataContext context, PasswordHasher<User> hasher)
         {
             _cloudinary = cloudinary;
             _context = context;
+            _hasher = hasher;
         }
 
         // GET /api/users
@@ -248,9 +251,10 @@ namespace project_backend.Controllers
             }
 
             var admin = await _context.Users.FindAsync(dto.AdminId);
-            if (admin == null) return Unauthorized(new { message = "Invalid adminId." });
+            if (admin == null || admin.Role != "Admin") return Unauthorized(new { message = "Invalid adminId." });
 
-            if (admin.PasswordHash != ComputeHash(dto.Password))
+            var result = _hasher.VerifyHashedPassword(admin, admin.PasswordHash, dto.Password);
+            if (result == PasswordVerificationResult.Failed)
                 return Unauthorized(new { message = "Invalid password." });
 
             var user = await _context.Users.FindAsync(id);

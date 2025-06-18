@@ -165,3 +165,4 @@ C:\Users\admin\Documents\Deiparine\School Shit\College 3rd Year\SECOND SEM\aspDo
 C:\Users\admin\Documents\Deiparine\School Shit\College 3rd Year\SECOND SEM\aspDotNet_proj\project-backend\bin\Debug\net9.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
 C:\Users\admin\Documents\Deiparine\School Shit\College 3rd Year\SECOND SEM\aspDotNet_proj\project-backend\obj\Debug\net9.0\project-backend.sourcelink.json
 C:\Users\admin\Documents\Deiparine\School Shit\College 3rd Year\SECOND SEM\aspDotNet_proj\project-backend\bin\Debug\net9.0\CloudinaryDotNet.dll
+C:\Users\admin\Documents\Deiparine\School Shit\College 3rd Year\SECOND SEM\aspDotNet_proj\project-backend\bin\Debug\net9.0\Bogus.dll

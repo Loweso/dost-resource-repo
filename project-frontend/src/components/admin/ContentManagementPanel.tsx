@@ -138,7 +138,7 @@ export default function ContentManagementPanel() {
                 ></Link>
                 <div className="flex flex-row gap-2">
                   <Image
-                    src={article.pictureUrl}
+                    src={article.pictureUrl || "/images/default_image.jpg"}
                     alt="Preview"
                     width={400}
                     height={250}

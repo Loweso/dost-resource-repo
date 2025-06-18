@@ -4,6 +4,7 @@ using project_backend.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -15,10 +16,12 @@ namespace project_backend.Controllers
     public class AuthController : ControllerBase
     {
         private readonly DataContext _context;
+        private readonly PasswordHasher<User> _hasher;
 
-        public AuthController(DataContext context)
+        public AuthController(DataContext context, PasswordHasher<User> hasher)
         {
             _context = context;
+            _hasher = hasher;
         }
 
         [HttpPost("register")]
@@ -27,18 +30,17 @@ namespace project_backend.Controllers
             if (await _context.Users.AnyAsync(u => u.Email == request.Email))
                 return BadRequest("User already exists");
 
-            var passwordHash = ComputeHash(request.Password);
-
             var user = new User
             {
                 FirstName = request.FirstName,
                 MiddleName = request.MiddleName,
                 LastName = request.LastName,
                 Email = request.Email,
-                PasswordHash = passwordHash,
                 University = request.University,
                 Role = "Student"
             };
+            
+            user.PasswordHash = _hasher.HashPassword(user, request.Password);
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
@@ -53,7 +55,8 @@ namespace project_backend.Controllers
             if (user == null)
                 return Unauthorized("User not found");
 
-            if (user.PasswordHash != ComputeHash(request.Password))
+            var result = _hasher.VerifyHashedPassword(user, user.PasswordHash, request.Password);
+            if (result == PasswordVerificationResult.Failed)
                 return Unauthorized("Incorrect password");
 
             var claims = new List<Claim>

@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using CloudinaryDotNet;
 using Microsoft.Extensions.Options;
 using project_backend.Data;
+using project_backend.Data.Seed;
+using Microsoft.AspNetCore.Identity;
+using project_backend.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -49,12 +52,12 @@ builder.Services.AddSingleton<Cloudinary>(provider =>
     );
     return new Cloudinary(account);
 });
+builder.Services.AddScoped<PasswordHasher<User>>();
+
 
 
 var app = builder.Build();
 
-
-// Enable routing and MVC
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -72,6 +75,14 @@ app.MapControllers();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<DataContext>();
+
+    await DatabaseSeeder.SeedAsync(context);
+}
 
 app.Run();
 

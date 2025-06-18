@@ -80,7 +80,7 @@ export default function ArticlesPage() {
               className="flex flex-row p-2 sm:p-4 rounded-md hover:bg-gray-200 transition-all cursor-pointer shadow gap-4"
             >
               <Image
-                src={article.pictureUrl}
+                src={article.pictureUrl || "/images/default_image.jpg"}
                 alt="Preview"
                 width={400}
                 height={250}

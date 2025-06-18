@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Toaster, toast } from "react-hot-toast";
 import api from "@/lib/api";
 import { LoadingModal } from "../loadingModal";
@@ -33,27 +33,37 @@ export default function MainAdminPanel() {
   const pageSize = 10;
   const [totalPages, setTotalPages] = useState(0);
 
-  async function handleSearch() {
+  useEffect(() => {
+    if (searchTerm.trim()) {
+      fetchUsers(currentPage);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPage]);
+
+  async function fetchUsers(page = currentPage) {
+    setIsLoading(true);
+    try {
+      const res = await api.get("/users", {
+        params: { search: searchTerm, page, pageSize },
+      });
+      setUsers(res.data.users || []);
+      setTotalPages(Math.ceil(res.data.total / pageSize));
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to fetch users.");
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  function handleSearch() {
     if (!searchTerm.trim()) {
       toast.error("Please input a search query.");
       return;
     }
 
-    setIsLoading(true);
-    try {
-      setCurrentPage(1);
-      const res = await api.get("/users", {
-        params: { search: searchTerm, page: currentPage, pageSize },
-      });
-      console.log(res.data);
-      setUsers(res.data.users || []);
-      setTotalPages(Math.ceil(res.data.total / pageSize));
-    } catch (error) {
-      console.error(error);
-      toast.error("Failed to search.");
-    } finally {
-      setIsLoading(false);
-    }
+    setCurrentPage(1);
+    fetchUsers(1);
   }
 
   async function handleFinalizeRole(id: number) {
@@ -154,7 +164,7 @@ export default function MainAdminPanel() {
               <button
                 disabled={currentPage === 1}
                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                className="p-2 bg-blue-500 text-white rounded disabled:opacity-50"
+                className="p-2 bg-blue-500 text-white rounded disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
               >
                 Prev
               </button>
@@ -166,7 +176,7 @@ export default function MainAdminPanel() {
                 onClick={() =>
                   setCurrentPage((prev) => Math.min(prev + 1, totalPages))
                 }
-                className="p-2 bg-blue-500 text-white rounded disabled:opacity-50"
+                className="p-2 bg-blue-500 text-white rounded disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
               >
                 Next
               </button>

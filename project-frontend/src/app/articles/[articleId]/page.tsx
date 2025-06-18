@@ -40,19 +40,18 @@ export default function ArticlePage() {
 
   return (
     <div className="flex flex-col items-center md:mt-10 mb-24">
-      {article.pictureUrl && (
-        <Image
-          src={"/images/dost-cover.png"}
-          alt="Picture"
-          width={2900}
-          height={950}
-          className="mb-4 shadow w-full h-[20vh] sm:h-[35vh] md:h-[60vh] object-cover"
-        />
-      )}
-      <h1 className="text-2xl sm:text-5xl font-semibold mt-6 font-vogue">
+      <Image
+        src={article.pictureUrl || "/images/dost-cover.png"}
+        alt="Picture"
+        width={2900}
+        height={950}
+        className="mb-4 shadow w-full h-[20vh] sm:h-[35vh] md:h-[60vh] object-cover"
+      />
+
+      <h1 className="text-2xl sm:text-5xl text-center font-semibold mt-6 font-vogue mx-8 md:mx-16">
         {article.title}
       </h1>
-      <p className="mb-8">
+      <p className="mb-8 mx-8 md:mx-16">
         {date
           ? new Date(date).toLocaleDateString(undefined, {
               year: "numeric",
@@ -62,7 +61,7 @@ export default function ArticlePage() {
           : ""}
       </p>
 
-      <p className="font-creato text-justify leading-6 my-9">
+      <p className="font-creato text-justify leading-6 my-9 text-xs sm:text-base mx-8 md:mx-44">
         {article.content}
       </p>
     </div>

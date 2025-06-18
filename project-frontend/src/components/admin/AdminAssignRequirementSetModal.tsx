@@ -106,7 +106,7 @@ export default function AdminAssignRequirementsModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/[0.5] p-4">
       {isLoading && <LoadingModal />}
-      <div className="bg-gray-100 p-6 rounded-md w-full h-full max-w-2xl">
+      <div className="bg-gray-100 p-6 rounded-md w-full h-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-lg">
         <h1 className="text-lg sm:text-xl font-semibold font-vogue leading-4">
           Assign Requirement Set to Students
         </h1>
@@ -149,7 +149,7 @@ export default function AdminAssignRequirementsModal({
         </div>
 
         {/* Student List */}
-        <ul className="flex-1 max-h-64 overflow-y-auto mb-4 space-y-2">
+        <ul className="flex-1 max-h-96 overflow-y-auto mb-4 space-y-2">
           {students
             .filter((s) => {
               if (searchTerm) {
