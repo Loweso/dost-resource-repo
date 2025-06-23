@@ -7,3 +7,11 @@ public class Article
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 }
+
+public class ArticleUploadDto
+{
+    public string Title { get; set; } = string.Empty;
+    public string Content { get; set; } = string.Empty;
+    public IFormFile? Image { get; set; }
+}
+

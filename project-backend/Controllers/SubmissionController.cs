@@ -23,8 +23,10 @@ public class SubmissionController : ControllerBase
     }
 
     [HttpPost("update")]
-    public async Task<IActionResult> UpdateSubmission([FromForm] IFormFile file, [FromForm] int setId, [FromForm] int reqId, [FromForm] int userId)
+    public async Task<IActionResult> UpdateSubmission([FromForm] UpdateSubmissionDto dto)
     {
+        var file = dto.File;
+
         if (file == null)
             return BadRequest("File is required.");
 
@@ -51,14 +53,14 @@ public class SubmissionController : ControllerBase
             return BadRequest("Failed to retrieve Cloudinary URL.");
 
         var submission = await _context.Submissions
-            .FirstOrDefaultAsync(s => s.RequirementId == reqId && s.UserId == userId);
+            .FirstOrDefaultAsync(s => s.RequirementId == dto.reqId && s.UserId == dto.userId);
 
         if (submission == null)
         {
             submission = new Submission
             {
-                UserId = userId,
-                RequirementId = reqId,
+                UserId = dto.userId,
+                RequirementId = dto.reqId,
                 FilePath = fileURL,
                 ApprovalStatus = ApprovalStatus.Pending,
                 SubmittedAt = DateTime.UtcNow

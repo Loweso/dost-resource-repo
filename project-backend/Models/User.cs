@@ -121,4 +121,65 @@ namespace project_backend.Models
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 
+    // DTO's
+
+    public class UserSignupDto
+    {
+        public string FirstName { get; set; } = string.Empty;
+        public string MiddleName { get; set; } = string.Empty;
+        public string LastName { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+        public string University { get; set; } = "University of the Philippines Cebu";
+    }
+
+    public class UserLoginDto
+    {
+        public string Email { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+    }
+
+    public class CreateUserDto
+    {
+        public IFormFile? profilePicture { get; set; }
+        public string firstName { get; set; } = null!;
+        public string lastName { get; set; } = null!;
+        public string email { get; set; } = null!;
+        public int yearLevel { get; set; }
+        public string password { get; set; } = null!;
+    }
+
+
+    public class UpdateUserDto
+    {
+        public IFormFile? ProfilePicture { get; set; }
+        public string FirstName { get; set; } = string.Empty;
+        public string MiddleName { get; set; } = string.Empty;
+        public string LastName { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public int YearLevel { get; set; }
+        public string University { get; set; } = string.Empty;
+        public string Course { get; set; } = string.Empty;
+    }
+
+    public class PatchUserDto
+    {
+        public int AdminId { get; set; }
+        public string Role { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+
+    }
+
+    public class RequirementSetDto
+    {
+        public string Title { get; set; } = string.Empty;
+        public DateTime Deadline { get; set; }
+        public List<string> Requirements { get; set; } = new List<string>();
+    }
+
+    public class AssignRequirementsDto
+    {
+        public int RequirementSetId { get; set; }
+        public List<int> StudentIds { get; set; } = new List<int>();
+    }
 }

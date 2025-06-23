@@ -161,39 +161,39 @@ namespace project_backend.Controllers
         // POST /api/users
         // To create a new User
         [HttpPost]
-        public async Task<IActionResult> CreateUser([FromForm] IFormFile? profilePicture, [FromForm] string firstName, [FromForm] string lastName, [FromForm] string email, [FromForm] int yearLevel, [FromForm] string password)
+        public async Task<IActionResult> CreateUser([FromForm] CreateUserDto dto)
         {
-            if (string.IsNullOrWhiteSpace(password))
+            if (string.IsNullOrWhiteSpace(dto.password))
             {
                 return BadRequest(new { message = "Password is required." });
             }
-            if (string.IsNullOrWhiteSpace(email))
+            if (string.IsNullOrWhiteSpace(dto.email))
             {
                 return BadRequest(new { message = "Email is required." });
             }
-            if (await _context.Users.AnyAsync(u => u.Email == email))
+            if (await _context.Users.AnyAsync(u => u.Email == dto.email))
             {
                 return Conflict(new { message = "Email already in use." });
             }
 
             string? photoURL = null;
-            if (profilePicture != null && profilePicture.Length > 0)
+            if (dto.profilePicture != null && dto.profilePicture.Length > 0)
             {
-                using (var stream = profilePicture.OpenReadStream())
+                using (var stream = dto.profilePicture.OpenReadStream())
                 {
-                    var uploadParams = new ImageUploadParams { File = new FileDescription(profilePicture.FileName, stream) };
+                    var uploadParams = new ImageUploadParams { File = new FileDescription(dto.profilePicture.FileName, stream) };
                     var uploadResult = await _cloudinary.UploadAsync(uploadParams);
                     photoURL = uploadResult.SecureUrl?.ToString();
                 }
             }
-            var passwordHash = Convert.ToBase64String(SHA256.Create().ComputeHash(Encoding.UTF8.GetBytes(password)));
+            var passwordHash = Convert.ToBase64String(SHA256.Create().ComputeHash(Encoding.UTF8.GetBytes(dto.password)));
             var newUser = new User
             {
-                FirstName = firstName,
-                LastName = lastName,
-                Email = email,
+                FirstName = dto.firstName,
+                LastName = dto.lastName,
+                Email = dto.email,
                 PasswordHash = passwordHash,
-                YearLevel = yearLevel,
+                YearLevel = dto.yearLevel,
                 ProfileImageUrl = photoURL ?? string.Empty,
                 Role = "Student"
             };
@@ -328,21 +328,5 @@ namespace project_backend.Controllers
 
             return Ok(new { message = "Account successfully removed." });
         }
-        
-        private string ComputeHash(string password)
-        {
-            using var sha256 = SHA256.Create();
-            var bytes = Encoding.UTF8.GetBytes(password);
-            var hash = sha256.ComputeHash(bytes);
-            return Convert.ToBase64String(hash);
-        }
     }
-}
-
-public class PatchUserDto
-{
-    public int AdminId { get; set; }
-    public string Role { get; set; } = string.Empty;
-    public string Password { get; set; } = string.Empty;
-
 }

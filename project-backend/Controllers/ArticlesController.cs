@@ -70,21 +70,21 @@ public class ArticlesController : ControllerBase
 
     // POST
     [HttpPost]
-    public async Task<IActionResult> Post([FromForm] string Title, [FromForm] string Content, [FromForm] IFormFile Image)
+    public async Task<IActionResult> Post([FromForm] ArticleUploadDto dto)
     {
-        if (string.IsNullOrWhiteSpace(Title) ||
-            string.IsNullOrWhiteSpace(Content))
+        if (string.IsNullOrWhiteSpace(dto.Title) ||
+            string.IsNullOrWhiteSpace(dto.Content))
         {
             return BadRequest("Title and Content are required.");
         }
     
         string? imageUrl = null;
 
-        if (Image != null && Image.Length > 0)
+        if (dto.Image != null && dto.Image.Length > 0)
         {
             var uploadParams = new ImageUploadParams()
             {
-                File = new FileDescription(Image.FileName, Image.OpenReadStream()),
+                File = new FileDescription(dto.Image.FileName, dto.Image.OpenReadStream()),
                 Transformation = new Transformation().Width(500).Height(500).Crop("limit"),
             };
             
@@ -101,8 +101,8 @@ public class ArticlesController : ControllerBase
     
         var article = new Article
         {
-            Title = Title,
-            Content = Content,
+            Title = dto.Title,
+            Content = dto.Content,
             PictureUrl = imageUrl ?? string.Empty,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
@@ -116,27 +116,27 @@ public class ArticlesController : ControllerBase
 
     // PUT/{id}
     [HttpPut("{id}")]
-    public async Task<IActionResult> Put(int id, [FromForm] string Title, [FromForm] string Content, [FromForm] IFormFile? Image = null)
+    public async Task<IActionResult> Put(int id, [FromForm] ArticleUploadDto dto)
     {
         var article = await _context.Articles.FindAsync(id);
         if (article == null)
         {
             return NotFound("Article not found.");
         }
-        if (string.IsNullOrWhiteSpace(Title) ||
-            string.IsNullOrWhiteSpace(Content))
+        if (string.IsNullOrWhiteSpace(dto.Title) ||
+            string.IsNullOrWhiteSpace(dto.Content))
         {
             return BadRequest("Title and Content are required.");
         }
-        article.Title = Title;
-        article.Content = Content;
+        article.Title = dto.Title;
+        article.Content = dto.Content;
         article.UpdatedAt = DateTime.UtcNow;
 
-        if (Image != null && Image.Length > 0)
+        if (dto.Image != null && dto.Image.Length > 0)
         {
             var uploadParams = new ImageUploadParams()
             {
-                File = new FileDescription(Image.FileName, Image.OpenReadStream()),
+                File = new FileDescription(dto.Image.FileName, dto.Image.OpenReadStream()),
                 Transformation = new Transformation().Width(500).Height(500).Crop("limit"),
             };
             

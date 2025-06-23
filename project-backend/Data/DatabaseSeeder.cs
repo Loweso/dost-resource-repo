@@ -56,6 +56,7 @@ namespace project_backend.Data.Seed
 
             admin.PasswordHash = hasher.HashPassword(admin, "admin123");
             context.Users.Add(admin);
+            users.Add(admin);
             await context.Users.AddRangeAsync(users);
             await context.SaveChangesAsync();
 
@@ -97,47 +98,6 @@ namespace project_backend.Data.Seed
 
             await context.UserRequirementSets.AddRangeAsync(userReqSets);
             await context.SaveChangesAsync();
-
-            var submissions = new List<Submission>();
-            foreach (var user in users)
-            {
-                foreach (var reqSet in requirementSets)
-                {
-                    foreach (var req in reqSet.Requirements)
-                    {
-                        if (random.NextDouble() < 0.5) continue;
-
-                        submissions.Add(new Submission
-                        {
-                            UserId = user.Id,
-                            RequirementId = req.Id,
-                            FilePath = "", // Empty path instead of PDF URL
-                            SubmittedAt = DateTime.UtcNow.AddDays(-random.Next(1, 10)),
-                            ApprovalStatus = ApprovalStatus.Pending
-                        });
-                    }
-                }
-            }
-
-            await context.Submissions.AddRangeAsync(submissions);
-            await context.SaveChangesAsync();
-
-            var adminUsers = users.Where(u => u.Role == "Admin").ToList();
-
-            if (adminUsers.Count != 0)
-            {
-                var comments = submissions.Select(sub =>
-                    new SubmissionComment
-                    {
-                        SubmissionId = sub.Id,
-                        UserId = adminUsers[random.Next(adminUsers.Count)].Id,
-                        Content = "Please review this submission for clarity.",
-                        CreatedAt = DateTime.UtcNow
-                    }).ToList();
-
-                await context.SubmissionComments.AddRangeAsync(comments);
-                await context.SaveChangesAsync();
-            }
 
             var articleFaker = new Faker<Article>()
                 .RuleFor(a => a.Title, f => f.Lorem.Sentence())

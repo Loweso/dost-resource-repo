@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using CloudinaryDotNet;
 using Microsoft.Extensions.Options;
@@ -6,6 +6,7 @@ using project_backend.Data;
 using project_backend.Data.Seed;
 using Microsoft.AspNetCore.Identity;
 using project_backend.Models;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -53,15 +54,14 @@ builder.Services.AddSingleton<Cloudinary>(provider =>
     return new Cloudinary(account);
 });
 builder.Services.AddScoped<PasswordHasher<User>>();
-
-
+builder.Services.AddEndpointsApiExplorer(); // <-- Important
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SupportNonNullableReferenceTypes(); // Optional
+    c.EnableAnnotations(); // Optional
+});
 
 var app = builder.Build();
-
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Home/Error");
-}
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
@@ -70,6 +70,9 @@ app.UseCors("AllowLocalhost3000");
 app.UseSession();
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.MapControllers();
 app.MapControllerRoute(

@@ -166,3 +166,12 @@ C:\Users\admin\Documents\Deiparine\School Shit\College 3rd Year\SECOND SEM\aspDo
 C:\Users\admin\Documents\Deiparine\School Shit\College 3rd Year\SECOND SEM\aspDotNet_proj\project-backend\obj\Debug\net9.0\project-backend.sourcelink.json
 C:\Users\admin\Documents\Deiparine\School Shit\College 3rd Year\SECOND SEM\aspDotNet_proj\project-backend\bin\Debug\net9.0\CloudinaryDotNet.dll
 C:\Users\admin\Documents\Deiparine\School Shit\College 3rd Year\SECOND SEM\aspDotNet_proj\project-backend\bin\Debug\net9.0\Bogus.dll
+C:\Users\admin\Documents\Deiparine\School Shit\College 3rd Year\SECOND SEM\aspDotNet_proj\project-backend\obj\Debug\net9.0\rpswa.dswa.cache.json
+C:\Users\admin\Documents\Deiparine\School Shit\College 3rd Year\SECOND SEM\aspDotNet_proj\project-backend\obj\Debug\net9.0\rjimswa.dswa.cache.json
+C:\Users\admin\Documents\Deiparine\School Shit\College 3rd Year\SECOND SEM\aspDotNet_proj\project-backend\obj\Debug\net9.0\rjsmrazor.dswa.cache.json
+C:\Users\admin\Documents\Deiparine\School Shit\College 3rd Year\SECOND SEM\aspDotNet_proj\project-backend\obj\Debug\net9.0\rjsmcshtml.dswa.cache.json
+C:\Users\admin\Documents\Deiparine\School Shit\College 3rd Year\SECOND SEM\aspDotNet_proj\project-backend\bin\Debug\net9.0\Swashbuckle.AspNetCore.Swagger.dll
+C:\Users\admin\Documents\Deiparine\School Shit\College 3rd Year\SECOND SEM\aspDotNet_proj\project-backend\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+C:\Users\admin\Documents\Deiparine\School Shit\College 3rd Year\SECOND SEM\aspDotNet_proj\project-backend\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+C:\Users\admin\Documents\Deiparine\School Shit\College 3rd Year\SECOND SEM\aspDotNet_proj\project-backend\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt
+C:\Users\admin\Documents\Deiparine\School Shit\College 3rd Year\SECOND SEM\aspDotNet_proj\project-backend\bin\Debug\net9.0\Swashbuckle.AspNetCore.Annotations.dll
