@@ -3,32 +3,16 @@
   "WorkspaceRootPath": "C:\\Users\\admin\\Documents\\Deiparine\\School Shit\\College 3rd Year\\SECOND SEM\\aspDotNet_proj\\project-backend\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{4C10E120-6C10-0676-96A2-0EC882AE719D}|project-backend.csproj|c:\\users\\admin\\documents\\deiparine\\school shit\\college 3rd year\\second sem\\aspdotnet_proj\\project-backend\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4C10E120-6C10-0676-96A2-0EC882AE719D}|project-backend.csproj|solutionrelative:models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{4C10E120-6C10-0676-96A2-0EC882AE719D}|project-backend.csproj|c:\\users\\admin\\documents\\deiparine\\school shit\\college 3rd year\\second sem\\aspdotnet_proj\\project-backend\\data\\databaseseeder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4C10E120-6C10-0676-96A2-0EC882AE719D}|project-backend.csproj|solutionrelative:data\\databaseseeder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4C10E120-6C10-0676-96A2-0EC882AE719D}|project-backend.csproj|c:\\users\\admin\\documents\\deiparine\\school shit\\college 3rd year\\second sem\\aspdotnet_proj\\project-backend\\models\\submission.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4C10E120-6C10-0676-96A2-0EC882AE719D}|project-backend.csproj|solutionrelative:models\\submission.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{4C10E120-6C10-0676-96A2-0EC882AE719D}|project-backend.csproj|c:\\users\\admin\\documents\\deiparine\\school shit\\college 3rd year\\second sem\\aspdotnet_proj\\project-backend\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4C10E120-6C10-0676-96A2-0EC882AE719D}|project-backend.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4C10E120-6C10-0676-96A2-0EC882AE719D}|project-backend.csproj|c:\\users\\admin\\documents\\deiparine\\school shit\\college 3rd year\\second sem\\aspdotnet_proj\\project-backend\\controllers\\userscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4C10E120-6C10-0676-96A2-0EC882AE719D}|project-backend.csproj|solutionrelative:controllers\\userscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{4C10E120-6C10-0676-96A2-0EC882AE719D}|project-backend.csproj|c:\\users\\admin\\documents\\deiparine\\school shit\\college 3rd year\\second sem\\aspdotnet_proj\\project-backend\\controllers\\submissioncontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4C10E120-6C10-0676-96A2-0EC882AE719D}|project-backend.csproj|solutionrelative:controllers\\submissioncontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{4C10E120-6C10-0676-96A2-0EC882AE719D}|project-backend.csproj|c:\\users\\admin\\documents\\deiparine\\school shit\\college 3rd year\\second sem\\aspdotnet_proj\\project-backend\\controllers\\requirementsetcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4C10E120-6C10-0676-96A2-0EC882AE719D}|project-backend.csproj|solutionrelative:controllers\\requirementsetcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{4C10E120-6C10-0676-96A2-0EC882AE719D}|project-backend.csproj|c:\\users\\admin\\documents\\deiparine\\school shit\\college 3rd year\\second sem\\aspdotnet_proj\\project-backend\\models\\article.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4C10E120-6C10-0676-96A2-0EC882AE719D}|project-backend.csproj|solutionrelative:models\\article.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{4C10E120-6C10-0676-96A2-0EC882AE719D}|project-backend.csproj|c:\\users\\admin\\documents\\deiparine\\school shit\\college 3rd year\\second sem\\aspdotnet_proj\\project-backend\\controllers\\articlescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4C10E120-6C10-0676-96A2-0EC882AE719D}|project-backend.csproj|solutionrelative:controllers\\articlescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{4C10E120-6C10-0676-96A2-0EC882AE719D}|project-backend.csproj|c:\\users\\admin\\documents\\deiparine\\school shit\\college 3rd year\\second sem\\aspdotnet_proj\\project-backend\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{4C10E120-6C10-0676-96A2-0EC882AE719D}|project-backend.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     }
   ],
   "DocumentGroupContainers": [
@@ -38,24 +22,11 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 3,
           "Children": [
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "UsersController.cs",
-              "DocumentMoniker": "C:\\Users\\admin\\Documents\\Deiparine\\School Shit\\College 3rd Year\\SECOND SEM\\aspDotNet_proj\\project-backend\\Controllers\\UsersController.cs",
-              "RelativeDocumentMoniker": "Controllers\\UsersController.cs",
-              "ToolTip": "C:\\Users\\admin\\Documents\\Deiparine\\School Shit\\College 3rd Year\\SECOND SEM\\aspDotNet_proj\\project-backend\\Controllers\\UsersController.cs",
-              "RelativeToolTip": "Controllers\\UsersController.cs",
-              "ViewState": "AgIAAD8BAAAAAAAAAAAiwMoAAAAjAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-23T15:30:08.888Z",
-              "EditorCaption": ""
             },
             {
               "$type": "Bookmark",
@@ -63,80 +34,41 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "RequirementSetController.cs",
-              "DocumentMoniker": "C:\\Users\\admin\\Documents\\Deiparine\\School Shit\\College 3rd Year\\SECOND SEM\\aspDotNet_proj\\project-backend\\Controllers\\RequirementSetController.cs",
-              "RelativeDocumentMoniker": "Controllers\\RequirementSetController.cs",
-              "ToolTip": "C:\\Users\\admin\\Documents\\Deiparine\\School Shit\\College 3rd Year\\SECOND SEM\\aspDotNet_proj\\project-backend\\Controllers\\RequirementSetController.cs",
-              "RelativeToolTip": "Controllers\\RequirementSetController.cs",
-              "ViewState": "AgIAAD8AAAAAAAAAAAAiwAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-23T15:28:52.577Z",
+              "DocumentIndex": 2,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\admin\\Documents\\Deiparine\\School Shit\\College 3rd Year\\SECOND SEM\\aspDotNet_proj\\project-backend\\appsettings.json",
+              "RelativeDocumentMoniker": "appsettings.json",
+              "ToolTip": "C:\\Users\\admin\\Documents\\Deiparine\\School Shit\\College 3rd Year\\SECOND SEM\\aspDotNet_proj\\project-backend\\appsettings.json",
+              "RelativeToolTip": "appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAADAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-06-23T16:08:31.554Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "User.cs",
-              "DocumentMoniker": "C:\\Users\\admin\\Documents\\Deiparine\\School Shit\\College 3rd Year\\SECOND SEM\\aspDotNet_proj\\project-backend\\Models\\User.cs",
-              "RelativeDocumentMoniker": "Models\\User.cs",
-              "ToolTip": "C:\\Users\\admin\\Documents\\Deiparine\\School Shit\\College 3rd Year\\SECOND SEM\\aspDotNet_proj\\project-backend\\Models\\User.cs",
-              "RelativeToolTip": "Models\\User.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAAAAAAAAAAAA==",
+              "Title": "DatabaseSeeder.cs",
+              "DocumentMoniker": "C:\\Users\\admin\\Documents\\Deiparine\\School Shit\\College 3rd Year\\SECOND SEM\\aspDotNet_proj\\project-backend\\Data\\DatabaseSeeder.cs",
+              "RelativeDocumentMoniker": "Data\\DatabaseSeeder.cs",
+              "ToolTip": "C:\\Users\\admin\\Documents\\Deiparine\\School Shit\\College 3rd Year\\SECOND SEM\\aspDotNet_proj\\project-backend\\Data\\DatabaseSeeder.cs",
+              "RelativeToolTip": "Data\\DatabaseSeeder.cs",
+              "ViewState": "AgIAAFsAAAAAAAAAAAAgwHIAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-23T15:25:30.287Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "SubmissionController.cs",
-              "DocumentMoniker": "C:\\Users\\admin\\Documents\\Deiparine\\School Shit\\College 3rd Year\\SECOND SEM\\aspDotNet_proj\\project-backend\\Controllers\\SubmissionController.cs",
-              "RelativeDocumentMoniker": "Controllers\\SubmissionController.cs",
-              "ToolTip": "C:\\Users\\admin\\Documents\\Deiparine\\School Shit\\College 3rd Year\\SECOND SEM\\aspDotNet_proj\\project-backend\\Controllers\\SubmissionController.cs",
-              "RelativeToolTip": "Controllers\\SubmissionController.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAKAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-23T15:12:58.352Z",
+              "WhenOpened": "2025-06-23T16:00:10.537Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "Submission.cs",
-              "DocumentMoniker": "C:\\Users\\admin\\Documents\\Deiparine\\School Shit\\College 3rd Year\\SECOND SEM\\aspDotNet_proj\\project-backend\\Models\\Submission.cs",
-              "RelativeDocumentMoniker": "Models\\Submission.cs",
-              "ToolTip": "C:\\Users\\admin\\Documents\\Deiparine\\School Shit\\College 3rd Year\\SECOND SEM\\aspDotNet_proj\\project-backend\\Models\\Submission.cs",
-              "RelativeToolTip": "Models\\Submission.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAswAIAAAAwAAAAAAAAAA==",
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\admin\\Documents\\Deiparine\\School Shit\\College 3rd Year\\SECOND SEM\\aspDotNet_proj\\project-backend\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "C:\\Users\\admin\\Documents\\Deiparine\\School Shit\\College 3rd Year\\SECOND SEM\\aspDotNet_proj\\project-backend\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AgIAAEIAAAAAAAAAAAAUwBkAAAAZAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-23T15:18:45.362Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "ArticlesController.cs",
-              "DocumentMoniker": "C:\\Users\\admin\\Documents\\Deiparine\\School Shit\\College 3rd Year\\SECOND SEM\\aspDotNet_proj\\project-backend\\Controllers\\ArticlesController.cs",
-              "RelativeDocumentMoniker": "Controllers\\ArticlesController.cs",
-              "ToolTip": "C:\\Users\\admin\\Documents\\Deiparine\\School Shit\\College 3rd Year\\SECOND SEM\\aspDotNet_proj\\project-backend\\Controllers\\ArticlesController.cs",
-              "RelativeToolTip": "Controllers\\ArticlesController.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-23T15:13:03.4Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "Article.cs",
-              "DocumentMoniker": "C:\\Users\\admin\\Documents\\Deiparine\\School Shit\\College 3rd Year\\SECOND SEM\\aspDotNet_proj\\project-backend\\Models\\Article.cs",
-              "RelativeDocumentMoniker": "Models\\Article.cs",
-              "ToolTip": "C:\\Users\\admin\\Documents\\Deiparine\\School Shit\\College 3rd Year\\SECOND SEM\\aspDotNet_proj\\project-backend\\Models\\Article.cs",
-              "RelativeToolTip": "Models\\Article.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-23T15:12:11.029Z",
+              "WhenOpened": "2025-06-23T15:37:50.331Z",
               "EditorCaption": ""
             }
           ]

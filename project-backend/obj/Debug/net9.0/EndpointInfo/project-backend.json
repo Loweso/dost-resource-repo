@@ -282,25 +282,6 @@
         }
       }
     },
-    "/test": {
-      "get": {
-        "tags": [
-          "project-backend"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/RequirementSet": {
       "get": {
         "tags": [
